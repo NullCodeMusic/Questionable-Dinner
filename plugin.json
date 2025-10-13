@@ -1,0 +1,26 @@
+{
+  "slug": "WeirdIre",
+  "name": "WeirdIre",
+  "version": "2.6.4",
+  "license": "proprietary",
+  "brand": "WeirdIre",
+  "author": "Rox Wilson",
+  "authorEmail": "",
+  "authorUrl": "nullcode.info",
+  "pluginUrl": "",
+  "manualUrl": "",
+  "sourceUrl": "",
+  "donateUrl": "",
+  "changelogUrl": "",
+  "modules": [
+    {
+      "slug": "ASawB",
+      "name": "A Saw B",
+      "description": "A utility module for comparing, splitting, and subtracting voltages",
+      "tags": [
+        "Logic",
+        "Utility"
+      ]
+    }
+  ]
+}
