@@ -30,7 +30,7 @@ struct ASawB : Module {
 
 	ASawB() {
 		config(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
-		configParam(BIAS_PARAM, 0.f, 5.f, 0.f, "Bias");
+		configParam(BIAS_PARAM, 0.f, 10.f, 0.f, "Bias");
 		configInput(LA_INPUT, "Logic A");
 		configInput(LB_INPUT, "Logic B");
 		configInput(SA_INPUT, "Split A");
