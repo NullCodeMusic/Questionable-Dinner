@@ -1,16 +1,16 @@
 {
-  "slug": "WeirdIre",
-  "name": "WeirdIre",
+  "slug": "QuestionableDinner",
+  "name": "Questionable Dinner",
   "version": "2.6.4",
   "license": "proprietary",
-  "brand": "WeirdIre",
+  "brand": "Questionable Dinner",
   "author": "Rox Wilson",
   "authorEmail": "",
   "authorUrl": "nullcode.info",
   "pluginUrl": "",
   "manualUrl": "",
   "sourceUrl": "",
-  "donateUrl": "",
+  "donateUrl": "https://ko-fi.com/rox1000000",
   "changelogUrl": "",
   "modules": [
     {
