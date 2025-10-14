@@ -1,8 +1,8 @@
 {
   "slug": "QuestionableDinner",
   "name": "Questionable Dinner",
-  "version": "2.6.4",
-  "license": "proprietary",
+  "version": "2.0.0",
+  "license": "Apache-2.0",
   "brand": "Questionable Dinner",
   "author": "Rox Wilson",
   "authorEmail": "",
@@ -16,7 +16,7 @@
     {
       "slug": "ASawB",
       "name": "A Saw B",
-      "description": "A utility module for comparing, splitting, and subtracting voltages",
+      "description": "Compare, split, subtract and mangle two inputs",
       "tags": [
         "Logic",
         "Utility"

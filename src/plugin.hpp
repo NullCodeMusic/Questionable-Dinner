@@ -12,13 +12,18 @@ extern Plugin* pluginInstance;
 extern Model* modelASawB;
 
 //Custom Components
-struct WinterKnob : RoundKnob {
+struct KnobQ001 : RoundKnob {
 
-	WinterKnob() {
+	KnobQ001() {
 		minAngle = -0.83 * M_PI;
 		maxAngle = 0.83 * M_PI;
 
-		setSvg(Svg::load(asset::system("res/ComponentLibrary/RoundSmallBlackKnob.svg")));
-		bg->setSvg(Svg::load(asset::system("res/ComponentLibrary/RoundSmallBlackKnob_bg.svg")));
+		setSvg(Svg::load(asset::plugin(pluginInstance, "res/qd-001/knob-fg.svg")));
+		bg->setSvg(Svg::load(asset::plugin(pluginInstance, "res/qd-001/knob-bg.svg")));
+	}
+};
+struct PortQ001 : app::SvgPort {
+	PortQ001() {
+		setSvg(Svg::load(asset::plugin(pluginInstance, "res/qd-001/port.svg")));
 	}
 };
