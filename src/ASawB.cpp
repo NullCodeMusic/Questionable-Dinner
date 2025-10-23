@@ -1,6 +1,9 @@
 #include "plugin.hpp"
 
 struct ASawB : Module {
+
+	int theme = -1;
+
 	enum ParamId {
 		BIAS_PARAM,
 		PARAMS_LEN
@@ -46,6 +49,13 @@ struct ASawB : Module {
 		configOutput(MOUT_OUTPUT, "A minus B");
 	}
 
+	void setTheme(int newTheme){
+		theme = newTheme;
+	}
+	int getTheme(){
+		return theme;
+	}
+
 	void process(const ProcessArgs& args) override {
 
 		float bias = params[BIAS_PARAM].getValue();
@@ -78,20 +88,35 @@ struct ASawB : Module {
 		outputs[MOUT_OUTPUT].setVoltage(a-b);
 
 	}
+
+	json_t* dataToJson() override {
+		json_t* rootJ = json_object();
+		json_object_set_new(rootJ, "theme", json_integer(theme));
+		return rootJ;
+	}
+
+	void dataFromJson(json_t* rootJ) override {
+		json_t* modeJ = json_object_get(rootJ, "theme");
+		if (modeJ)
+			theme = json_integer_value(modeJ);
+	}
 };
 
-
 struct ASawBWidget : ModuleWidget {
+
+	std::string panelpaths[4] = {"res/qd-001/ASawB.svg","res/qd-001/ASawBAlt.svg","res/qd-001/AsawBMinimalist.svg","res/qd-001/AsawBMinimalistAlt.svg"};
+
 	ASawBWidget(ASawB* module) {
 		setModule(module);
-		setPanel(createPanel(asset::plugin(pluginInstance, "res/ASawB.svg")));
 
-		/*
-		addChild(createWidget<ScrewSilver>(Vec(RACK_GRID_WIDTH, 0)));
-		addChild(createWidget<ScrewSilver>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));
-		addChild(createWidget<ScrewSilver>(Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
-		addChild(createWidget<ScrewSilver>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
-		*/
+		setPanel(createPanel(asset::plugin(pluginInstance, panelpaths[0]),asset::plugin(pluginInstance, panelpaths[3])));
+
+		if(module){
+			int theme = module->getTheme();
+			if(theme>=0){
+			setPanel(createPanel(asset::plugin(pluginInstance, panelpaths[theme])));
+			}
+		}
 
 		addParam(createParamCentered<KnobQ001>(mm2px(Vec(18.197, 11.595)), module, ASawB::BIAS_PARAM));
 
@@ -109,6 +134,24 @@ struct ASawBWidget : ModuleWidget {
 		addOutput(createOutputCentered<PortQ001>(mm2px(Vec(7.62, 80.5)), module, ASawB::SOVER_OUTPUT));
 		addOutput(createOutputCentered<PortQ001>(mm2px(Vec(17.78, 80.5)), module, ASawB::SUNDER_OUTPUT));
 		addOutput(createOutputCentered<PortQ001>(mm2px(Vec(17.78, 111)), module, ASawB::MOUT_OUTPUT));
+	}
+
+	//THEME MENU
+	void appendContextMenu(Menu* menu) override {
+		ASawB* module = getModule<ASawB>();
+
+		menu->addChild(new MenuSeparator);
+	
+		menu->addChild(createIndexSubmenuItem("Panel Theme Override", 
+			{"Main","Alt","Min-Light","Min-Dark"},	
+			[=](){
+				return module->getTheme();
+			},
+			[=](int newTheme) {
+				module->setTheme(newTheme);
+				setPanel(createPanel(asset::plugin(pluginInstance, panelpaths[newTheme])));
+			}
+		));
 	}
 };
 
