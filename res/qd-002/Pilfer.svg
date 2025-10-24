@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="60.959999mm"
+   height="128.5mm"
+   viewBox="0 0 60.959999 128.5"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
+   sodipodi:docname="Pilfer.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="2.1184484"
+     inkscape:cx="78.595259"
+     inkscape:cy="251.12719"
+     inkscape:window-width="2560"
+     inkscape:window-height="1494"
+     inkscape:window-x="-11"
+     inkscape:window-y="-11"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer2" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="components"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <circle
+       style="fill:#ff0000;stroke:none;stroke-width:0.466;paint-order:markers fill stroke;fill-opacity:1"
+       id="path1"
+       cx="10.156112"
+       cy="10.421053"
+       r="3.4442463"
+       inkscape:label="accel" />
+    <circle
+       style="fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.466;paint-order:markers fill stroke"
+       id="path1-8"
+       cx="10.455884"
+       cy="46.284134"
+       r="3.4442463"
+       inkscape:label="acc cv" />
+    <circle
+       style="fill:#00ff00;fill-opacity:1;stroke:none;stroke-width:0.466;paint-order:markers fill stroke"
+       id="path1-8-1"
+       cx="10.411727"
+       cy="80.276123"
+       r="3.4442463"
+       inkscape:label="acc cv" />
+    <circle
+       style="fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.466;paint-order:markers fill stroke"
+       id="path1-2"
+       cx="22.709345"
+       cy="10.627533"
+       r="3.4442463"
+       inkscape:label="frict" />
+    <circle
+       style="fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.466;paint-order:markers fill stroke"
+       id="path1-8-7"
+       cx="23.009117"
+       cy="46.490616"
+       r="3.4442463"
+       inkscape:label="fri cv" />
+    <circle
+       style="fill:#00ff00;fill-opacity:1;stroke:none;stroke-width:0.466;paint-order:markers fill stroke"
+       id="path1-8-1-6"
+       cx="22.96496"
+       cy="80.482597"
+       r="3.4442463"
+       inkscape:label="fri cv" />
+    <circle
+       style="fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.466;paint-order:markers fill stroke"
+       id="path1-2-2"
+       cx="35.729828"
+       cy="10.683304"
+       r="3.4442463"
+       inkscape:label="bounce" />
+    <circle
+       style="fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.466;paint-order:markers fill stroke"
+       id="path1-8-7-2"
+       cx="36.029602"
+       cy="46.546387"
+       r="3.4442463"
+       inkscape:label="bou cv" />
+    <circle
+       style="fill:#00ff00;fill-opacity:1;stroke:none;stroke-width:0.466;paint-order:markers fill stroke"
+       id="path1-8-1-6-1"
+       cx="35.985443"
+       cy="80.538368"
+       r="3.4442463"
+       inkscape:label="bou cv" />
+    <circle
+       style="fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.466;paint-order:markers fill stroke"
+       id="path1-2-2-6"
+       cx="49.870964"
+       cy="10.356533"
+       r="3.4442463"
+       inkscape:label="tolerance" />
+    <circle
+       style="fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.466;paint-order:markers fill stroke"
+       id="path1-8-7-2-1"
+       cx="50.170738"
+       cy="46.219616"
+       r="3.4442463"
+       inkscape:label="tol cv" />
+    <circle
+       style="fill:#00ff00;fill-opacity:1;stroke:none;stroke-width:0.466;paint-order:markers fill stroke"
+       id="path1-8-1-6-1-8"
+       cx="50.126579"
+       cy="80.211601"
+       r="3.4442463"
+       inkscape:label="tol cv" />
+    <circle
+       style="fill:#00ff00;fill-opacity:1;stroke:none;stroke-width:0.466;paint-order:markers fill stroke"
+       id="path1-8-1-6-1-8-5"
+       cx="16.788876"
+       cy="108.8469"
+       r="3.4442463"
+       inkscape:label="audio" />
+    <circle
+       style="fill:#0000ff;fill-opacity:1;stroke:none;stroke-width:0.466;paint-order:markers fill stroke"
+       id="path1-8-1-6-1-8-5-3"
+       cx="29.291065"
+       cy="109.06894"
+       r="3.4442463"
+       inkscape:label="audio" />
+    <circle
+       style="fill:#ff00ff;fill-opacity:1;stroke:none;stroke-width:0.466;paint-order:markers fill stroke"
+       id="path1-8-1-6-1-8-5-3-1"
+       cx="45.072594"
+       cy="97.062485"
+       r="3.4442463"
+       inkscape:label="moving" />
+    <circle
+       style="fill:#ff00ff;fill-opacity:1;stroke:none;stroke-width:0.466;paint-order:markers fill stroke"
+       id="path1-8-1-6-1-8-5-3-8-2"
+       cx="54.189655"
+       cy="105.76901"
+       r="3.4442463"
+       inkscape:label="bouncing" />
+    <circle
+       style="fill:#ff00ff;fill-opacity:1;stroke:none;stroke-width:0.466;paint-order:markers fill stroke"
+       id="path1-8-1-6-1-8-5-3-1-7"
+       cx="53.866158"
+       cy="97.021393"
+       r="3.4442463"
+       inkscape:label="velocity" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="components 1">
+    <rect
+       style="fill:#ff00ff;stroke:none;stroke-width:0.466;paint-order:markers fill stroke"
+       id="rect1"
+       width="60.959999"
+       height="128.5"
+       x="0"
+       y="0" />
+  </g>
+</svg>

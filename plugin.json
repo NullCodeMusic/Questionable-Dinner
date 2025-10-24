@@ -21,6 +21,14 @@
         "Logic",
         "Utility"
       ]
+    },
+    {
+      "slug": "Pilfer",
+      "name": "Pilfer",
+      "description": "An Experimental Filter",
+      "tags": [
+        "Filter"
+      ]
     }
   ]
 }
