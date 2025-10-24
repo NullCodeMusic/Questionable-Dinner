@@ -25,7 +25,7 @@
     {
       "slug": "Pilfer",
       "name": "Pilfer",
-      "description": "An Experimental Filter",
+      "description": "A chaotic distortion with a moving particle.",
       "tags": [
         "Filter","Distortion","Envelope Follower"
       ]

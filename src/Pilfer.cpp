@@ -55,13 +55,13 @@ struct Pilfer : Module {
 		configInput(FRI_CV_INPUT, "Friction CV");
 		configInput(TOL_CV_INPUT, "Distance CV");
 		configInput(BOU_CV_INPUT, "Bounce CV");
-		configInput(AUDIO_X_INPUT, "X In");
-		configOutput(AUDIO_X_OUTPUT, "X Out");
-		configInput(AUDIO_Y_INPUT, "Y In");
-		configOutput(AUDIO_Y_OUTPUT, "Y Out");
+		configInput(AUDIO_X_INPUT, "Target X In");
+		configOutput(AUDIO_X_OUTPUT, "X Position Out");
+		configInput(AUDIO_Y_INPUT, "Target Y In");
+		configOutput(AUDIO_Y_OUTPUT, "Y Position Out");
 		configBypass(AUDIO_X_INPUT,AUDIO_X_OUTPUT);
 		configBypass(AUDIO_Y_INPUT,AUDIO_Y_OUTPUT);
-		configInput(SHAKE_CV_INPUT, "Shake CV");
+		configInput(SHAKE_CV_INPUT, "Shake In");
 		configInput(DRI_CV_INPUT, "Drive CV");
 
 		configParam(ACC_CV_PARAM, -1.f, 1.f, 0.f, "Acceleration CV");
@@ -69,7 +69,7 @@ struct Pilfer : Module {
 		configParam(TOL_CV_PARAM, -1.f, 1.f, 0.f, "Distance CV");
 		configParam(BOU_CV_PARAM, -1.f, 1.f, 0.f, "Bounce CV");
 		configParam(DRI_CV_PARAM, -1.f, 1.f, 0.f, "Drive CV");
-		configParam(SHAKE_CV_PARAM, -1.f, 1.f, 0.f, "Shake CV");
+		configParam(SHAKE_CV_PARAM, -1.f, 1.f, 0.f, "Shake Amount");
 	}
 	
 	float pos_x = 0;
@@ -238,7 +238,7 @@ struct Pilfer : Module {
 			mode = 2;
 			return;
 		}
-		if(inputs[AUDIO_X_INPUT].isConnected()){
+		if(inputs[AUDIO_X_INPUT].isConnected()||inputs[SHAKE_CV_INPUT].isConnected()){
 			mode = 1;
 			return;
 		}
