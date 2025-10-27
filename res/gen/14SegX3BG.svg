@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="17mm"
+   height="8mm"
+   viewBox="0 0 17 8"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
+   sodipodi:docname="14SegX3BG.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="11.983754"
+     inkscape:cx="21.445701"
+     inkscape:cy="23.990814"
+     inkscape:window-width="2560"
+     inkscape:window-height="1494"
+     inkscape:window-x="-11"
+     inkscape:window-y="-11"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <inkscape:path-effect
+       effect="fillet_chamfer"
+       id="path-effect8"
+       is_visible="true"
+       lpeversion="1"
+       nodesatellites_param="F,0,0,1,0,0.4999998,0,1 @ F,0,0,1,0,0.4999998,0,1 @ F,0,0,1,0,0.49999987,0,1 @ F,0,0,1,0,0.49999987,0,1"
+       radius="0"
+       unit="px"
+       method="auto"
+       mode="F"
+       chamfer_steps="1"
+       flexible="false"
+       use_knot_distance="true"
+       apply_no_radius="true"
+       apply_with_radius="true"
+       only_selected="false"
+       hide_knots="false" />
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       style="baseline-shift:baseline;display:inline;overflow:visible;vector-effect:none;paint-order:markers fill stroke;enable-background:accumulate;stop-color:#000000;stop-opacity:1;opacity:1"
+       d="M 48.759766,8.7363281 C 48.341591,8.736328 47.998047,9.0818255 47.998047,9.5 v 7 c 0,0.418175 0.343544,0.763672 0.761719,0.763672 h 16.144531 c 0.418174,-1e-6 0.763672,-0.345498 0.763672,-0.763672 v -7 c 0,-0.4181739 -0.345498,-0.7636712 -0.763672,-0.7636719 z m 0,0.5273438 h 16.144531 c 0.13411,2e-7 0.238281,0.1022181 0.238281,0.2363281 v 7 c 0,0.13411 -0.104171,0.236328 -0.238281,0.236328 H 48.759766 c -0.134111,0 -0.236329,-0.102218 -0.236329,-0.236328 v -7 c 0,-0.1341102 0.102218,-0.2363282 0.236329,-0.2363281 z"
+       id="rect6"
+       transform="matrix(0.96327735,0,0,0.93940029,-46.244433,-8.2111788)" />
+  </g>
+</svg>
