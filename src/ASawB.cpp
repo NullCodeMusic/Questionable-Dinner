@@ -104,7 +104,7 @@ struct ASawB : Module {
 
 struct ASawBWidget : ModuleWidget {
 
-	std::string panelpaths[4] = {"res/qd-001/ASawB.svg","res/qd-001/ASawBAlt.svg","res/qd-001/AsawBMinimalist.svg","res/qd-001/AsawBMinimalistAlt.svg"};
+	std::string panelpaths[4] = {"res/qd-001/ASawB.svg","res/qd-001/ASawBAlt.svg","res/qd-001/ASawBMinimalist.svg","res/qd-001/ASawBMinimalistAlt.svg"};
 
 	ASawBWidget(ASawB* module) {
 		setModule(module);
