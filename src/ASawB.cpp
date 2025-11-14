@@ -109,7 +109,7 @@ struct ASawBWidget : ModuleWidget {
 	ASawBWidget(ASawB* module) {
 		setModule(module);
 
-		setPanel(createPanel(asset::plugin(pluginInstance, panelpaths[0]),asset::plugin(pluginInstance, panelpaths[3])));
+		setPanel(createPanel(asset::plugin(pluginInstance, panelpaths[2]),asset::plugin(pluginInstance, panelpaths[3])));
 
 		if(module){
 			int theme = module->getTheme();
@@ -118,22 +118,22 @@ struct ASawBWidget : ModuleWidget {
 			}
 		}
 
-		addParam(createParamCentered<KnobQ001>(mm2px(Vec(18.197, 11.595)), module, ASawB::BIAS_PARAM));
+		addParam(createParamCentered<QKnob8mm>(mm2px(Vec(18.197, 11.595)), module, ASawB::BIAS_PARAM));
 
-		addInput(createInputCentered<PortQ001>(mm2px(Vec(7.62, 25.5)), module, ASawB::LA_INPUT));
-		addInput(createInputCentered<PortQ001>(mm2px(Vec(17.78, 25.5)), module, ASawB::LB_INPUT));
-		addInput(createInputCentered<PortQ001>(mm2px(Vec(7.62, 68)), module, ASawB::SA_INPUT));
-		addInput(createInputCentered<PortQ001>(mm2px(Vec(17.78, 68)), module, ASawB::SB_INPUT));
-		addInput(createInputCentered<PortQ001>(mm2px(Vec(7.62, 98)), module, ASawB::MA_INPUT));
-		addInput(createInputCentered<PortQ001>(mm2px(Vec(17.78, 98)), module, ASawB::MB_INPUT));
+		addInput(createInputCentered<QPort>(mm2px(Vec(7.62, 25.5)), module, ASawB::LA_INPUT));
+		addInput(createInputCentered<QPort>(mm2px(Vec(17.78, 25.5)), module, ASawB::LB_INPUT));
+		addInput(createInputCentered<QPort>(mm2px(Vec(7.62, 68)), module, ASawB::SA_INPUT));
+		addInput(createInputCentered<QPort>(mm2px(Vec(17.78, 68)), module, ASawB::SB_INPUT));
+		addInput(createInputCentered<QPort>(mm2px(Vec(7.62, 98)), module, ASawB::MA_INPUT));
+		addInput(createInputCentered<QPort>(mm2px(Vec(17.78, 98)), module, ASawB::MB_INPUT));
 
-		addOutput(createOutputCentered<PortQ001>(mm2px(Vec(7.62, 38)), module, ASawB::LLESS_OUTPUT));
-		addOutput(createOutputCentered<PortQ001>(mm2px(Vec(17.78, 38)), module, ASawB::LGREATER_OUTPUT));
-		addOutput(createOutputCentered<PortQ001>(mm2px(Vec(7.62, 50.5)), module, ASawB::LEQUAL_OUTPUT));
-		addOutput(createOutputCentered<PortQ001>(mm2px(Vec(17.78, 50.5)), module, ASawB::LUNEQUAL_OUTPUT));
-		addOutput(createOutputCentered<PortQ001>(mm2px(Vec(7.62, 80.5)), module, ASawB::SOVER_OUTPUT));
-		addOutput(createOutputCentered<PortQ001>(mm2px(Vec(17.78, 80.5)), module, ASawB::SUNDER_OUTPUT));
-		addOutput(createOutputCentered<PortQ001>(mm2px(Vec(17.78, 111)), module, ASawB::MOUT_OUTPUT));
+		addOutput(createOutputCentered<QPort>(mm2px(Vec(7.62, 38)), module, ASawB::LLESS_OUTPUT));
+		addOutput(createOutputCentered<QPort>(mm2px(Vec(17.78, 38)), module, ASawB::LGREATER_OUTPUT));
+		addOutput(createOutputCentered<QPort>(mm2px(Vec(7.62, 50.5)), module, ASawB::LEQUAL_OUTPUT));
+		addOutput(createOutputCentered<QPort>(mm2px(Vec(17.78, 50.5)), module, ASawB::LUNEQUAL_OUTPUT));
+		addOutput(createOutputCentered<QPort>(mm2px(Vec(7.62, 80.5)), module, ASawB::SOVER_OUTPUT));
+		addOutput(createOutputCentered<QPort>(mm2px(Vec(17.78, 80.5)), module, ASawB::SUNDER_OUTPUT));
+		addOutput(createOutputCentered<QPort>(mm2px(Vec(17.78, 111)), module, ASawB::MOUT_OUTPUT));
 	}
 
 	//THEME MENU
@@ -143,7 +143,7 @@ struct ASawBWidget : ModuleWidget {
 		menu->addChild(new MenuSeparator);
 	
 		menu->addChild(createIndexSubmenuItem("Panel Theme Override", 
-			{"Main","Alt","Min-Light","Min-Dark"},	
+			{"Winter","Melon","Min-Light","Min-Dark"},	
 			[=](){
 				return module->getTheme();
 			},

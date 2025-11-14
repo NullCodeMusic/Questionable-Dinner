@@ -27,7 +27,27 @@
       "name": "Pilfer",
       "description": "A moving particle attempts to follow input audio.",
       "tags": [
-        "Filter","Distortion","Envelope follower","Oscillator","Physical modeling"
+        "Filter",
+        "Distortion",
+        "Envelope follower",
+        "Oscillator",
+        "Physical modeling"
+      ]
+    },
+    {
+      "slug": "Surgeon",
+      "name": "Surgeon",
+      "description": "A text-based additive oscillator.",
+      "tags": [
+        "Oscillator"
+      ]
+    },
+    {
+      "slug": "ElasticTwins",
+      "name": "Elastic Twins",
+      "description": "",
+      "tags": [
+        "Delay"
       ]
     }
   ]

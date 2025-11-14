@@ -47,10 +47,10 @@ struct Pilfer : Module {
 
 	Pilfer() {
 		config(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
-		configParam(ACCEL_PARAM, 1.f, 19.5f, 10.f, "Acceleration");
+		configParam(ACCEL_PARAM, 1.f, 19.5f, 10.f, "Acceleration","v/sec",2.f);
 		configParam(FRICT_PARAM, 0.f, 1.f, 0.5f, "Friction");
 		configParam(TOLERANCE_PARAM, 0.f, 5.f, 0.f, "Trigger Distance");
-		configParam(BOUNCE_PARAM, 0.f, 0.98f, 0.f, "Bounce");
+		configParam(BOUNCE_PARAM, 0.f, 0.98f, 0.f, "Bounce","%",0.f,100.0f);
 		configParam(DRIVE_PARAM, 0.f, 5.f, 0.f, "Drive");
 		configParam(OVERSAMPLE_PARAM, 1, 16, 4, "Oversampling", "x");
 
@@ -340,15 +340,16 @@ struct Pilfer : Module {
 struct PilferWidget : ModuleWidget {
 	PilferWidget(Pilfer* module) {
 		setModule(module);
-		setPanel(createPanel(asset::plugin(pluginInstance, "res/qd-002/Pilfer.svg")));
+		std::string panelpaths[3] = {"res/qd-002/Pilfer.svg","res/qd-002/PilferMinLight.svg","res/qd-002/PilferMinDark.svg"};
+		setPanel(createPanel(asset::plugin(pluginInstance, panelpaths[0])));
 
 		addParam(createParam<QSegParam>(mm2px(Vec(48.25, 9.00)), module, Pilfer::OVERSAMPLE_PARAM));
 
-		addParam(createParamCentered<RoundBigBlackKnob>(mm2px(Vec(16.51, 29.50)), module, Pilfer::ACCEL_PARAM));
-		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(38.735, 50.50)), module, Pilfer::DRIVE_PARAM));
-		addParam(createParamCentered<RoundBigBlackKnob>(mm2px(Vec(54.60, 29.50)), module, Pilfer::FRICT_PARAM));
-		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(18.46, 56.50)), module, Pilfer::TOLERANCE_PARAM));
-		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(52.66, 56.50)), module, Pilfer::BOUNCE_PARAM));
+		addParam(createParamCentered<QKnob18mm>(mm2px(Vec(16.51, 29.50)), module, Pilfer::ACCEL_PARAM));
+		addParam(createParamCentered<QKnob10mm>(mm2px(Vec(38.735, 50.50)), module, Pilfer::DRIVE_PARAM));
+		addParam(createParamCentered<QKnob18mm>(mm2px(Vec(54.60, 29.50)), module, Pilfer::FRICT_PARAM));
+		addParam(createParamCentered<QKnob10mm>(mm2px(Vec(18.46, 56.50)), module, Pilfer::TOLERANCE_PARAM));
+		addParam(createParamCentered<QKnob10mm>(mm2px(Vec(52.66, 56.50)), module, Pilfer::BOUNCE_PARAM));
 
 		addParam(createParamCentered<CKSS>(mm2px(Vec(29.67, 18.00)), module, Pilfer::HFLF_BUTTON));
 		addParam(createParamCentered<CKSS>(mm2px(Vec(41.45, 18.00)), module, Pilfer::LINEXP_BUTTON));
@@ -361,23 +362,25 @@ struct PilferWidget : ModuleWidget {
 		addParam(createParamCentered<Trimpot>(mm2px(Vec(35.56, 76.00)), module, Pilfer::DRI_CV_PARAM));
 		addParam(createParamCentered<Trimpot>(mm2px(Vec(48.26, 76.00)), module, Pilfer::BOU_CV_PARAM));
 
-		addInput(createInputCentered<PortQ001>(mm2px(Vec(10.16, 93.00)), module, Pilfer::ACC_CV_INPUT));
-		addInput(createInputCentered<PortQ001>(mm2px(Vec(60.96, 93.00)), module, Pilfer::FRI_CV_INPUT));
-		addInput(createInputCentered<PortQ001>(mm2px(Vec(22.86, 91.00)), module, Pilfer::TOL_CV_INPUT));
-		addInput(createInputCentered<PortQ001>(mm2px(Vec(48.26, 91.00)), module, Pilfer::BOU_CV_INPUT));
-		addInput(createInputCentered<PortQ001>(mm2px(Vec(35.56, 90.00)), module, Pilfer::DRI_CV_INPUT));
-		addInput(createInputCentered<PortQ001>(mm2px(Vec(35.56, 102.5)), module, Pilfer::SHAKE_CV_INPUT));
-		addInput(createInputCentered<PortQ001>(mm2px(Vec(10.16, 111.00)), module, Pilfer::AUDIO_X_INPUT));
-		addInput(createInputCentered<PortQ001>(mm2px(Vec(22.86, 111.00)), module, Pilfer::AUDIO_Y_INPUT));
+		addInput(createInputCentered<QPort>(mm2px(Vec(10.16, 93.00)), module, Pilfer::ACC_CV_INPUT));
+		addInput(createInputCentered<QPort>(mm2px(Vec(60.96, 93.00)), module, Pilfer::FRI_CV_INPUT));
+		addInput(createInputCentered<QPort>(mm2px(Vec(22.86, 91.00)), module, Pilfer::TOL_CV_INPUT));
+		addInput(createInputCentered<QPort>(mm2px(Vec(48.26, 91.00)), module, Pilfer::BOU_CV_INPUT));
+		addInput(createInputCentered<QPort>(mm2px(Vec(35.56, 90.00)), module, Pilfer::DRI_CV_INPUT));
+		addInput(createInputCentered<QPort>(mm2px(Vec(35.56, 102.5)), module, Pilfer::SHAKE_CV_INPUT));
+		addInput(createInputCentered<QPort>(mm2px(Vec(10.16, 111.00)), module, Pilfer::AUDIO_X_INPUT));
+		addInput(createInputCentered<QPort>(mm2px(Vec(22.86, 111.00)), module, Pilfer::AUDIO_Y_INPUT));
 
-		addOutput(createOutputCentered<PortQ001>(mm2px(Vec(48.26, 111.00)), module, Pilfer::AUDIO_X_OUTPUT));
-		addOutput(createOutputCentered<PortQ001>(mm2px(Vec(60.96, 111.00)), module, Pilfer::AUDIO_Y_OUTPUT));
-		addOutput(createOutputCentered<PortQ001>(mm2px(Vec(54.40, 101.80)), module, Pilfer::VEL_OUTPUT));
+		addOutput(createOutputCentered<QPort>(mm2px(Vec(48.26, 111.00)), module, Pilfer::AUDIO_X_OUTPUT));
+		addOutput(createOutputCentered<QPort>(mm2px(Vec(60.96, 111.00)), module, Pilfer::AUDIO_Y_OUTPUT));
+		addOutput(createOutputCentered<QPort>(mm2px(Vec(54.40, 101.80)), module, Pilfer::VEL_OUTPUT));
 
 		addChild(createLightCentered<SmallSimpleLight<RedLight>>(mm2px(Vec(35.56, 15.75)), module, Pilfer::VELOCITY_LIGHT));
 		addChild(createLightCentered<SmallSimpleLight<RedLight>>(mm2px(Vec(35.56, 20.25)), module, Pilfer::BOUNCING_LIGHT));
 		addChild(createLightCentered<SmallSimpleLight<BlueLight>>(mm2px(Vec(22.83, 102.50)), module, Pilfer::D1_LIGHT));
 		addChild(createLightCentered<SmallSimpleLight<YellowLight>>(mm2px(Vec(27.96, 105.00)), module, Pilfer::D2_LIGHT));
+
+		
 	}
 	void appendContextMenu(Menu* menu) override {
 		Pilfer* module = getModule<Pilfer>();

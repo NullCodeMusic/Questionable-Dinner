@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="40.639999mm"
+   height="128.5mm"
+   viewBox="0 0 40.64 128.5"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
+   sodipodi:docname="test.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="2.1184484"
+     inkscape:cx="10.384959"
+     inkscape:cy="257.49978"
+     inkscape:window-width="2560"
+     inkscape:window-height="1494"
+     inkscape:window-x="-11"
+     inkscape:window-y="-11"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer2" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#734c61;fill-opacity:1;stroke:none;stroke-width:0.707038;stroke-dasharray:1.41407, 0.707038;paint-order:markers fill stroke"
+       id="rect1"
+       width="40.632221"
+       height="128.5"
+       x="0"
+       y="0" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="components">
+    <circle
+       style="fill:#00ff00;fill-opacity:1;stroke:none;stroke-width:0.444819;stroke-dasharray:0.889631, 0.444819;paint-order:markers fill stroke"
+       id="path1"
+       cx="19.335756"
+       cy="86.180832"
+       r="4"
+       inkscape:label="Audio" />
+    <circle
+       style="fill:#0000ff;fill-opacity:1;stroke:none;stroke-width:0.444819;stroke-dasharray:0.889631, 0.444819;paint-order:markers fill stroke"
+       id="path1-8-6"
+       cx="20.552555"
+       cy="116.9137"
+       r="4"
+       inkscape:label="Audio" />
+    <circle
+       style="fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.444819;stroke-dasharray:0.889631, 0.444819;paint-order:markers fill stroke"
+       id="path1-1-2"
+       cx="19.527115"
+       cy="18.666737"
+       r="4"
+       inkscape:label="Tension" />
+    <circle
+       style="fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.444819;stroke-dasharray:0.889631, 0.444819;paint-order:markers fill stroke"
+       id="circle1"
+       cx="19.527115"
+       cy="31.281118"
+       r="4"
+       inkscape:label="Elasticity" />
+  </g>
+</svg>
