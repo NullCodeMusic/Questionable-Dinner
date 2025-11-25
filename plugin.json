@@ -55,7 +55,7 @@
     {
       "slug": "Loam",
       "name": "Loam",
-      "description": "A simple lowpass filter.",
+      "description": "A dirty resonant filter.",
       "tags": [
         "Filter", 
         "Distortion",
