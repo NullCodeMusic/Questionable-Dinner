@@ -1,7 +1,6 @@
 #pragma once
 #include <rack.hpp>
 
-
 using namespace rack;
 
 // Declare the Plugin, defined in plugin.cpp
@@ -13,6 +12,7 @@ extern Model* modelASawB;
 extern Model* modelPilfer;
 extern Model* modelSurgeon;
 extern Model* modelElasticTwins;
+extern Model* modelLoam;
 
 //Custom Components & Widgets
 struct QKnob8mm : RoundKnob {
@@ -44,6 +44,17 @@ struct QKnob18mm : RoundKnob {
 		bg->setSvg(Svg::load(asset::plugin(pluginInstance, "res/knobs/18mm-bg.svg")));
 	}
 };
+
+struct QKnob18mmClock : RoundKnob {
+	QKnob18mmClock() {
+		minAngle = -0.83 * M_PI;
+		maxAngle = 0.83 * M_PI;
+
+		setSvg(Svg::load(asset::plugin(pluginInstance, "res/knobs/18mm-fg-clock.svg")));
+		bg->setSvg(Svg::load(asset::plugin(pluginInstance, "res/knobs/18mm-bg.svg")));
+	}
+};
+
 struct QPort : app::SvgPort {
 	QPort() {
 		setSvg(Svg::load(asset::plugin(pluginInstance, "res/gen/port.svg")));

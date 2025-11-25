@@ -53,8 +53,8 @@
     <circle
        style="fill:#00ff00;fill-opacity:1;stroke:none;stroke-width:0.444819;stroke-dasharray:0.889631, 0.444819;paint-order:markers fill stroke"
        id="path1"
-       cx="19.335756"
-       cy="86.180832"
+       cx="20.334915"
+       cy="101.16821"
        r="4"
        inkscape:label="Audio" />
     <circle
@@ -66,17 +66,31 @@
        inkscape:label="Audio" />
     <circle
        style="fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.444819;stroke-dasharray:0.889631, 0.444819;paint-order:markers fill stroke"
-       id="path1-1-2"
-       cx="19.527115"
-       cy="18.666737"
+       id="circle2"
+       cx="20.316111"
+       cy="64.25"
        r="4"
-       inkscape:label="Tension" />
+       inkscape:label="Width" />
+    <circle
+       style="fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.444819;stroke-dasharray:0.889631, 0.444819;paint-order:markers fill stroke"
+       id="path1-1-2"
+       cx="19.65201"
+       cy="50.140244"
+       r="4"
+       inkscape:label="Feedback" />
     <circle
        style="fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.444819;stroke-dasharray:0.889631, 0.444819;paint-order:markers fill stroke"
        id="circle1"
        cx="19.527115"
        cy="31.281118"
        r="4"
-       inkscape:label="Elasticity" />
+       inkscape:label="Factor" />
+    <circle
+       style="fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.444819;stroke-dasharray:0.889631, 0.444819;paint-order:markers fill stroke"
+       id="circle3"
+       cx="19.527115"
+       cy="18.666737"
+       r="4"
+       inkscape:label="Sensitivity" />
   </g>
 </svg>

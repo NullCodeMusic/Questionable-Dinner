@@ -1,37 +1,27 @@
 #pragma once
-#include <cmath>
-#include <deque>
 
-template <typename T> int sign(T val) {
-    	return (T(0) < val) - (val < T(0));
-	}
+template <typename T> int sign(T val);
 
-float magnitude(float x, float y){
-		float out = sqrt(x*x+y*y);
-		if(std::isnan(out)){
-			return 0;
-		}
-		return out;
-	}
+float magnitude(float x, float y);
 
 enum staqueModes{
 	SM_STACK,
 	SM_QUEUE
 };
 
-float ratioFrom(float f){
-	if(f<0){
-		return 1/(1-f);
-	}else{
-		return f+1;
-	}
-}
+float ratioFrom(float f);
 
-static constexpr int MAX_DELAY = 2646000;
+float softClip(float val, float thresh, float hardness );
+
+float softClip(float val, float thresh );
+
+float softFold(float val, float thresh);
 
 template <typename T>
 struct staque
 {
+	static constexpr int MAX_DELAY = 2646000;
+
 	std::deque<T> data = {};
 	int mode = SM_STACK;
 

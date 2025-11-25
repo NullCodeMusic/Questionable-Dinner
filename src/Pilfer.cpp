@@ -2,6 +2,28 @@
 #include <cmath>
 
 struct Pilfer : Module {
+	//Copy Pase Channel Themes Stuff
+	int theme = -1;
+	void setTheme(int newTheme){
+		theme = newTheme;
+	}
+	int getTheme(){
+		return theme;
+	}
+	json_t* dataToJson() override {
+		json_t* rootJ = json_object();
+		json_object_set_new(rootJ, "theme", json_integer(theme));
+		return rootJ;
+	}
+
+	void dataFromJson(json_t* rootJ) override {
+		json_t* modeJ = json_object_get(rootJ, "theme");
+		if (modeJ){
+			setTheme(json_integer_value(modeJ));
+		}
+	}
+
+	//The Module
 	enum ParamId {
 		ACCEL_PARAM,
 		FRICT_PARAM,
@@ -338,10 +360,16 @@ struct Pilfer : Module {
 
 
 struct PilferWidget : ModuleWidget {
+	int theme = -1;
+	std::string panelpaths[3] = {
+		"res/qd-002/Pilfer.svg",
+		"res/qd-002/PilferMinDark.svg",
+		"res/qd-002/PilferMinLight.svg"
+	};
 	PilferWidget(Pilfer* module) {
 		setModule(module);
-		std::string panelpaths[3] = {"res/qd-002/Pilfer.svg","res/qd-002/PilferMinLight.svg","res/qd-002/PilferMinDark.svg"};
-		setPanel(createPanel(asset::plugin(pluginInstance, panelpaths[0])));
+
+		setPanel(createPanel(asset::plugin(pluginInstance, "res/qd-002/Pilfer.svg")));
 
 		addParam(createParam<QSegParam>(mm2px(Vec(48.25, 9.00)), module, Pilfer::OVERSAMPLE_PARAM));
 
@@ -386,8 +414,28 @@ struct PilferWidget : ModuleWidget {
 		Pilfer* module = getModule<Pilfer>();
 
 		menu->addChild(new MenuSeparator);
-
-		//add theme here
+	
+		menu->addChild(createIndexSubmenuItem(
+			"Panel Theme", 
+			{"Main","Min Dark","Min Light"},	
+			[=](){
+				return module->getTheme();
+			},
+			[=](int newTheme) {
+				module->setTheme(newTheme);
+			}
+		));
+	}
+	void step() override {
+		ModuleWidget::step();
+		Pilfer* module = getModule<Pilfer>();
+		if(!module){
+			return;
+		}
+		if(theme != module->theme){
+			theme = module->theme;
+			setPanel(createPanel(asset::plugin(pluginInstance,panelpaths[theme])));
+		}
 	}
 };
 

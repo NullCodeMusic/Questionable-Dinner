@@ -5,6 +5,16 @@
 
 
 struct Surgeon : Module {
+	//Copy Pase Channel Themes Stuff
+	int theme = -1;
+	void setTheme(int newTheme){
+		theme = newTheme;
+	}
+	int getTheme(){
+		return theme;
+	}
+
+	//Module
 	enum ParamId {
 		X_PARAM,
 		Y_PARAM,
@@ -48,10 +58,11 @@ struct Surgeon : Module {
 		bool triggable = true;
 		QInfoText* infodisplay;
 		double baseTrigTime[65]={300};
-		double partialsInfo[3][65]={0};
+		double partialsInfo[6][65]={0};
 		double randoms[65]={0};
 		bool frozen = false;
 		bool error = false;
+		int voices = 0;
 
 	//TINY EXPRESSION STUFF
 		te_expr *expressions[EXPRESSIONS_LEN];
@@ -66,7 +77,7 @@ struct Surgeon : Module {
 			"0.5",
 			"i*f",
 			"1/i*e",
-			"0"
+			"1"
 		};
 	//Param/CV Vars
 		double x;
@@ -86,7 +97,7 @@ struct Surgeon : Module {
 		double i = 1; //the index of current partial
 		double out;
 
-	te_variable vars[13] = {
+	te_variable vars[14] = {
 		{"x", &x}, {"y", &y}, {"z", &z},
 		{"j", &j}, {"k", &k}, {"l", &l}, 
 		{"f", &f},
@@ -98,15 +109,68 @@ struct Surgeon : Module {
 		{"out", &out}
 		};
 
-	//SLOW TICK
-	int slowTickRate = 16;
+	//QUALITY
+	int slowTickRate = 64;
 	int slowTickTimer = 0;
+	int getQuality(){
+		switch (slowTickRate)
+		{
+		case 2:
+			return 4;
+		
+		case 8:
+			return 3;
+
+		case 24:
+			return 2;
+
+		case 64:
+			return 1;
+
+		case 128:
+			return 0;
+		
+		default:
+			return 1;
+		}
+	}
+	void setQuality(int qual){
+		switch (qual)
+		{
+		case 0:
+			slowTickRate = 128;
+			break;
+		
+		case 1:
+			slowTickRate = 64;
+			break;
+
+		case 2:
+			slowTickRate = 24;
+			break;
+
+		case 3:
+			slowTickRate = 8;
+			break;
+
+		case 4:
+			slowTickRate = 2;
+			break;
+		
+		default:
+			slowTickRate = 64;
+			break;
+		}
+	}
+
+	//POLYPHONY
+	int channels = 1;
 
 
 	double env(double a,double d){
 		double pos = t;
 		if(d>0){
-		return (pos/a)*(pos>=0)*(pos<=a)/*Attack Slope*/+(1-(pos-a)/d)*(pos>a)*(pos<=a+d)/*Decay Slope*/;
+			return (pos/a)*(pos>=0)*(pos<=a)/*Attack Slope*/+(1-(pos-a)/d)*(pos>a)*(pos<=a+d)/*Decay Slope*/;
 		}
 		return 0;
 	}
@@ -117,7 +181,7 @@ struct Surgeon : Module {
 		configParam(Y_PARAM, -1.f, 1.f, 0.f, "Y");
 		configParam(Z_PARAM, -1.f, 1.f, 0.f, "Z");
 		configButton(FREEZE_BUTTON, "Freeze");
-		configParam(R_PARAM, 1000, 2000, 1234, "R Seed")->snapEnabled=true;
+		configParam(R_PARAM, 1000, 2000, 1234, "R Seed", "",0.0f,1.0f,-1000.f)->snapEnabled=true;
 		configParam(NUM_PARAM, 1.f, 64.f, 1.f, "Partials");
 		configInput(TRIG_INPUT, "Trig");
 		configInput(PITCH_INPUT, "Pitch");
@@ -126,6 +190,7 @@ struct Surgeon : Module {
 	
 	void onAdd(const AddEvent& e) override{
 		processStrings();
+		setQuality(getQuality());
 	}
 
 	json_t* dataToJson() override {
@@ -134,6 +199,8 @@ struct Surgeon : Module {
 				std::string key = "expr"+std::to_string(iter);
 				json_object_set_new(rootJ, key.c_str(), json_string(texts[iter].c_str()));
 			}
+			json_object_set_new(rootJ, "theme", json_integer(theme));
+			json_object_set_new(rootJ, "quality", json_integer(slowTickRate));
 		return rootJ;
 	}
 
@@ -148,9 +215,39 @@ struct Surgeon : Module {
 				}
 			}
 		}
+		json_t* modeJ = json_object_get(rootJ, "theme");
+		if (modeJ){
+			setTheme(json_integer_value(modeJ));
+		}
+		json_t* qualJ = json_object_get(rootJ, "quality");
+		if (qualJ){
+			slowTickRate = json_integer_value(qualJ);
+		}
+	}
+
+	void onReset(const ResetEvent &e) override {
+		Module::onReset(e);
+		texts[EXPR_J] = "0";
+		texts[EXPR_K] = "0";
+		texts[EXPR_L] = "0";
+		texts[EXPR_WARP] = "0";
+		texts[EXPR_ATTACK] = "0.0039";
+		texts[EXPR_DECAY] = "0.5";
+		texts[EXPR_PITCH] = "i*f";
+		texts[EXPR_AMP] = "1/i*e";
+		texts[EXPR_PHASE] = "1";
+		if(fieldsLoaded){
+			for(int iter=0;iter<EXPRESSIONS_LEN;iter++){
+			fields[iter]->setText(texts[iter]);
+			}
+		}
 	}
 
 	void process(const ProcessArgs& args) override {
+
+		if(!fieldsLoaded){
+			return;
+		}
 
 		frozen = params[FREEZE_BUTTON].getValue()+inputs[FREEZE_INPUT].getVoltage()>0;
 	
@@ -180,8 +277,10 @@ struct Surgeon : Module {
 					randoms[iter]=rand()%100;
 					randoms[iter]/=100;
 				}
+
+				//slowTickRate = n/4+1;
 				
-				slowTickTimer = 0;
+				slowTickTimer = -1;
 				processStringFields();
 
 			}
@@ -191,24 +290,30 @@ struct Surgeon : Module {
 
 			trigInput = inputs[TRIG_INPUT].getVoltage();
 
-			if(slowTickTimer==0){
-					slowTick(args);
-			}
 			slowTickTimer++;
 			if(slowTickTimer>=slowTickRate){
 				slowTickTimer=0;
 			}
+			if(slowTickTimer==0){
+					slowTick(args,trig);
+			}
 
 		}
 		float audioOut=0;
+		float lerp = float(slowTickTimer)/float(slowTickRate);
 		for (int iint = 1; iint <= n; iint++){
 
-			baseTrigTime[iint] += args.sampleTime*partialsInfo[0][iint];
-			if(baseTrigTime[iint]>1){
+			float lerpPitch = partialsInfo[3][iint]*lerp+partialsInfo[0][iint]*(1-lerp);
+			float lerpPhase = partialsInfo[4][iint]*lerp+partialsInfo[1][iint]*(1-lerp);
+			float lerpAmp = partialsInfo[5][iint]*lerp+partialsInfo[2][iint]*(1-lerp);
+
+			baseTrigTime[iint] += args.sampleTime*lerpPitch;
+
+			if(baseTrigTime[iint]>1){//Switch to minus int cast if other stuff works
 				baseTrigTime[iint] --;
 			}
-			float adjustedSineTime = (baseTrigTime[iint]+partialsInfo[1][iint]);
-			audioOut += lu_sin(adjustedSineTime) * partialsInfo[2][iint];
+			float adjustedSineTime = (baseTrigTime[iint]+lerpPhase);
+			audioOut += lu_sin(adjustedSineTime) * lerpAmp;
 		}
 		if(!std::isnan(audioOut)){
 			outputs[OUT_OUTPUT].setVoltage(audioOut);
@@ -216,44 +321,16 @@ struct Surgeon : Module {
 		}
 	}
 
-	void slowTick(const ProcessArgs args){
+	void slowTick(const ProcessArgs args, bool trig){
 
 		x = params[X_PARAM].getValue()*inputs[X_INPUT].getNormalVoltage(1.0f);
 		y = params[Y_PARAM].getValue()*inputs[Y_INPUT].getNormalVoltage(1.0f);
 		z = params[Z_PARAM].getValue()*inputs[Z_INPUT].getNormalVoltage(1.0f);
 
 		n = params[NUM_PARAM].getValue();
-		slowTickRate = n/4;
 
 		f = dsp::FREQ_C4 * dsp::exp2_taylor5(inputs[PITCH_INPUT].getVoltage());
 
-		if(infodisplay){
-			infodisplay->color = nvgRGBAf(1,1,1,0.82);
-			if(error){
-				infodisplay->text = "ERROR";
-			}else if(fields[EXPR_J]->hovered){
-				infodisplay->text = "Variable J";
-			}else if(fields[EXPR_K]->hovered){
-				infodisplay->text = "Variable K";
-			}else if(fields[EXPR_L]->hovered){
-				infodisplay->text = "Variable L";
-			}else if(fields[EXPR_WARP]->hovered){
-				infodisplay->text = "Time Warp";
-			}else if(fields[EXPR_ATTACK]->hovered){
-				infodisplay->text = "Env Attack";
-			}else if(fields[EXPR_DECAY]->hovered){
-				infodisplay->text = "Env Decay";
-			}else if(fields[EXPR_PITCH]->hovered){
-				infodisplay->text = "Pitch";
-			}else if(fields[EXPR_PHASE]->hovered){
-				infodisplay->text = "Phase";
-			}else if(fields[EXPR_AMP]->hovered){
-				infodisplay->text = "Amplitude";
-			}else{
-				infodisplay->text = "SURGEON";
-				infodisplay->color = nvgRGBAf(1,1,1,0.5);
-			}
-		}
 		// RECALCULATE CONTROLS
 
 		if(frozen){return;}
@@ -262,8 +339,9 @@ struct Surgeon : Module {
 		double attack;
 		double decay;
 
-		for(i=1;i<=n;i++){
 
+		if(trig){
+		
 			int iint = static_cast<int>(i);
 
 			r = randoms[iint];
@@ -284,6 +362,35 @@ struct Surgeon : Module {
 			partialsInfo[0][iint]=te_eval(expressions[EXPR_PITCH]);
 			partialsInfo[1][iint]=te_eval(expressions[EXPR_PHASE]);
 			partialsInfo[2][iint]=te_eval(expressions[EXPR_AMP])*(partialsInfo[0][iint]<args.sampleRate/2);
+
+		}else{
+			std::swap(partialsInfo[0],partialsInfo[3]);
+			std::swap(partialsInfo[1],partialsInfo[4]);
+			std::swap(partialsInfo[2],partialsInfo[5]);
+		}
+
+		for(i=1;i<=n;i++){
+
+			int iint = static_cast<int>(i);
+
+			r = randoms[iint];
+
+			j=te_eval(expressions[EXPR_J]);
+			k=te_eval(expressions[EXPR_K]);
+			l=te_eval(expressions[EXPR_L]);
+
+			timeWarp=te_eval(expressions[EXPR_WARP]);
+
+			t=timeWarp+baseTrigTime[0]+args.sampleTime*slowTickRate;
+
+			attack=te_eval(expressions[EXPR_ATTACK]);
+			decay=te_eval(expressions[EXPR_DECAY]);
+
+			e = env(attack,decay);
+			
+			partialsInfo[3][iint]=te_eval(expressions[EXPR_PITCH]);
+			partialsInfo[4][iint]=te_eval(expressions[EXPR_PHASE]);
+			partialsInfo[5][iint]=te_eval(expressions[EXPR_AMP])*(partialsInfo[0][iint]<args.sampleRate/2);
 
 		}
 	}
@@ -312,7 +419,12 @@ struct Surgeon : Module {
 };
 
 struct SurgeonWidget : ModuleWidget {
-
+	int theme = -1;
+	std::string panelpaths[3] = {
+		"res/qd-003/Surgeon.svg",
+		"res/qd-003/SurgeonMinDark.svg",
+		"res/qd-003/SurgeonMinLight.svg"
+	};
 	SurgeonWidget(Surgeon* module) {
 		setModule(module);
 		setPanel(createPanel(asset::plugin(pluginInstance, "res/qd-003/Surgeon.svg")));
@@ -353,9 +465,66 @@ struct SurgeonWidget : ModuleWidget {
 	void appendContextMenu(Menu* menu) override {
 		Surgeon* module = getModule<Surgeon>();
 
-		menu -> addChild(new MenuSeparator);
+		menu->addChild(new MenuSeparator);
+	
+		menu->addChild(createIndexSubmenuItem(
+			"Panel Theme", 
+			{"Main", "Min-Dark", "Min-Light"},	
+			[=](){
+				return module->getTheme();
+			},
+			[=](int newTheme) {
+				module->setTheme(newTheme);
+			}
+		));
 
-		menu -> addChild(createMenuLabel(""));
+		menu->addChild(createIndexSubmenuItem(
+			"Quality", 
+			{"Low", "Standard", "High", "Very High", "Ultra"},	
+			[=](){
+				return module->getQuality();
+			},
+			[=](int qual) {
+				module->setQuality(qual);
+			}
+		));
+	}
+
+	void step() override {
+		ModuleWidget::step();
+		Surgeon* module = getModule<Surgeon>();
+		if(!module){
+			return;
+		}
+
+		module->infodisplay->color = nvgRGBAf(1,1,1,0.82);
+		if(module->fields[Surgeon::EXPR_J]->hovered){
+			module->infodisplay->text = "Variable J";
+		}else if(module->fields[Surgeon::EXPR_K]->hovered){
+			module->infodisplay->text = "Variable K";
+		}else if(module->fields[Surgeon::EXPR_L]->hovered){
+			module->infodisplay->text = "Variable L";
+		}else if(module->fields[Surgeon::EXPR_WARP]->hovered){
+			module->infodisplay->text = "Time Warp";
+		}else if(module->fields[Surgeon::EXPR_ATTACK]->hovered){
+			module->infodisplay->text = "Env Attack";
+		}else if(module->fields[Surgeon::EXPR_DECAY]->hovered){
+			module->infodisplay->text = "Env Decay";
+		}else if(module->fields[Surgeon::EXPR_PITCH]->hovered){
+			module->infodisplay->text = "Pitch";
+		}else if(module->fields[Surgeon::EXPR_PHASE]->hovered){
+			module->infodisplay->text = "Phase";
+		}else if(module->fields[Surgeon::EXPR_AMP]->hovered){
+			module->infodisplay->text = "Amplitude";
+		}else{
+			module->infodisplay->text = "SURGEON";
+			module->infodisplay->color = nvgRGBAf(1,1,1,0.5);
+		}
+
+		if(theme != module->theme){
+			theme = module->theme;
+			setPanel(createPanel(asset::plugin(pluginInstance,panelpaths[theme])));
+		}
 	}
 };
 

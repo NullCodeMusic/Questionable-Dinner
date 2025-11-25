@@ -23,9 +23,9 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
-     inkscape:zoom="47.935015"
-     inkscape:cx="35.965359"
-     inkscape:cy="15.239382"
+     inkscape:zoom="11.983754"
+     inkscape:cx="25.284231"
+     inkscape:cy="29.832055"
      inkscape:window-width="2560"
      inkscape:window-height="1494"
      inkscape:window-x="-11"
@@ -34,6 +34,18 @@
      inkscape:current-layer="g1" />
   <defs
      id="defs1">
+    <rect
+       x="25.826632"
+       y="14.81172"
+       width="18.432258"
+       height="7.8856761"
+       id="rect2" />
+    <rect
+       x="21.595995"
+       y="15.223406"
+       width="67.148202"
+       height="52.632862"
+       id="rect1" />
     <inkscape:path-effect
        effect="fillet_chamfer"
        id="path-effect10"
@@ -51,6 +63,72 @@
        apply_with_radius="true"
        only_selected="false"
        hide_knots="false" />
+    <rect
+       x="25.826632"
+       y="14.81172"
+       width="18.432259"
+       height="7.8856759"
+       id="rect2-4" />
+    <rect
+       x="25.826632"
+       y="14.81172"
+       width="18.432259"
+       height="7.8856759"
+       id="rect2-4-5" />
+    <rect
+       x="25.826632"
+       y="14.81172"
+       width="18.432259"
+       height="7.8856759"
+       id="rect2-4-7" />
+    <rect
+       x="25.826632"
+       y="14.81172"
+       width="18.432258"
+       height="7.8856761"
+       id="rect10" />
+    <rect
+       x="25.826632"
+       y="14.81172"
+       width="18.432259"
+       height="7.8856759"
+       id="rect11" />
+    <rect
+       x="25.826632"
+       y="14.81172"
+       width="18.432259"
+       height="7.8856759"
+       id="rect12" />
+    <rect
+       x="25.826632"
+       y="14.81172"
+       width="18.432259"
+       height="7.8856759"
+       id="rect13" />
+    <rect
+       x="25.826632"
+       y="14.81172"
+       width="18.432258"
+       height="7.8856761"
+       id="rect18" />
+    <rect
+       x="25.826632"
+       y="14.81172"
+       width="18.432259"
+       height="7.8856759"
+       id="rect19" />
+    <rect
+       x="25.826632"
+       y="14.81172"
+       width="18.432259"
+       height="7.8856759"
+       id="rect20" />
+    <rect
+       x="25.826632"
+       y="14.81172"
+       width="18.432259"
+       height="7.8856759"
+       id="rect21" />
   </defs>
   <g
      inkscape:label="Layer 1"
@@ -67,10 +145,10 @@
          x="8.6119156"
          y="1.5286816"
          inkscape:label="notch"
-         inkscape:path-effect="#path-effect10"
          sodipodi:type="rect"
+         transform="matrix(1,0,0,0.89169875,-0.00548733,0.70010182)"
          d="m 8.6119156,1.5286816 h 0.7761691 v 4.7991829 a 0.13652804,0.13652804 135 0 1 -0.136528,0.136528 H 8.7437516 a 0.13183606,0.13183606 45 0 1 -0.131836,-0.131836 z"
-         transform="matrix(1,0,0,0.89169875,-0.00548733,0.70010182)" />
+         inkscape:path-effect="#path-effect10" />
       <rect
          style="display:inline;fill:#332a11;stroke-width:0.397987"
          id="rect3-8-52-7"

@@ -1,0 +1,43 @@
+{
+  "plugin": "QuestionableDinner",
+  "model": "Surgeon",
+  "version": "2.0.4",
+  "params": [
+    {
+      "value": 0.48313215374946594,
+      "id": 0
+    },
+    {
+      "value": 1.0,
+      "id": 1
+    },
+    {
+      "value": 0.97108429670333862,
+      "id": 2
+    },
+    {
+      "value": 1234.0,
+      "id": 3
+    },
+    {
+      "value": 0.0,
+      "id": 4
+    },
+    {
+      "value": 8.0,
+      "id": 5
+    }
+  ],
+  "data": {
+    "expr0": "(1/i)^20",
+    "expr1": "0",
+    "expr2": "0",
+    "expr3": "0",
+    "expr4": "0.0039",
+    "expr5": "1/i*(1+y)+j*z*2",
+    "expr6": "i^(1+x)*f",
+    "expr7": "1/i*e^4",
+    "expr8": "1",
+    "quality": 64
+  }
+}

@@ -2,8 +2,16 @@
 
 struct ASawB : Module {
 
+	//Copy Pase Channel Themes Stuff
 	int theme = -1;
+	void setTheme(int newTheme){
+		theme = newTheme;
+	}
+	int getTheme(){
+		return theme;
+	}
 
+	//The Module
 	enum ParamId {
 		BIAS_PARAM,
 		PARAMS_LEN
@@ -49,11 +57,25 @@ struct ASawB : Module {
 		configOutput(MOUT_OUTPUT, "A minus B");
 	}
 
-	void setTheme(int newTheme){
-		theme = newTheme;
-	}
-	int getTheme(){
-		return theme;
+	int channels = 1;
+
+	void onPortChange (const PortChangeEvent& e) override{
+
+		channels = std::max({
+			inputs[LA_INPUT].getChannels(),
+			inputs[LB_INPUT].getChannels(),
+			inputs[SA_INPUT].getChannels(),
+			inputs[SB_INPUT].getChannels(),
+			inputs[MA_INPUT].getChannels(),
+			inputs[MB_INPUT].getChannels()
+		});
+
+		for(int i = 0; i < OUTPUTS_LEN; i++){
+
+			outputs[i].setChannels(channels);
+
+		}
+
 	}
 
 	void process(const ProcessArgs& args) override {
@@ -62,31 +84,34 @@ struct ASawB : Module {
 
 		//LOGIC
 
-		//In
-		float a = inputs[LA_INPUT].getNormalVoltage(0.f);
-		float b = inputs[LB_INPUT].getNormalVoltage(0.f);
+		for(int i = 0; i < channels; i++){
 
-		//Out
-		outputs[LLESS_OUTPUT].setVoltage((a+bias<b)*10.f);
-		outputs[LGREATER_OUTPUT].setVoltage((a-bias>b)*10.f);
+			//In
+			float a = inputs[LA_INPUT].getNormalVoltage(0.f,i);
+			float b = inputs[LB_INPUT].getNormalVoltage(0.f,i);
 
-		outputs[LEQUAL_OUTPUT].setVoltage((abs(a-b)<=bias)*10.f);
-		outputs[LUNEQUAL_OUTPUT].setVoltage((abs(a-b)>bias)*10.f);
+			//Out
+			outputs[LLESS_OUTPUT].setVoltage((a+bias<b)*10.f,i);
+			outputs[LGREATER_OUTPUT].setVoltage((a-bias>b)*10.f,i);
 
-		//SPLIT
+			outputs[LEQUAL_OUTPUT].setVoltage((abs(a-b)<=bias)*10.f,i);
+			outputs[LUNEQUAL_OUTPUT].setVoltage((abs(a-b)>bias)*10.f,i);
 
-		a = inputs[SA_INPUT].getNormalVoltage(a);
-		b = inputs[SB_INPUT].getNormalVoltage(b);
+			//SPLIT
 
-		outputs[SOVER_OUTPUT].setVoltage(std::max(bias,a-b)-bias);
-		outputs[SUNDER_OUTPUT].setVoltage(abs(std::min(-bias,a-b)+bias));
+			a = inputs[SA_INPUT].getNormalVoltage(a,i);
+			b = inputs[SB_INPUT].getNormalVoltage(b,i);
 
-		//SUBTRACT
-		a = inputs[MA_INPUT].getNormalVoltage(a);
-		b = inputs[MB_INPUT].getNormalVoltage(b);
+			outputs[SOVER_OUTPUT].setVoltage(std::max(bias,a-b)-bias,i);
+			outputs[SUNDER_OUTPUT].setVoltage(abs(std::min(-bias,a-b)+bias),i);
 
-		outputs[MOUT_OUTPUT].setVoltage(a-b);
+			//SUBTRACT
+			a = inputs[MA_INPUT].getNormalVoltage(a,i);
+			b = inputs[MB_INPUT].getNormalVoltage(b,i);
 
+			outputs[MOUT_OUTPUT].setVoltage(a-b,i);
+
+		}
 	}
 
 	json_t* dataToJson() override {
@@ -97,27 +122,28 @@ struct ASawB : Module {
 
 	void dataFromJson(json_t* rootJ) override {
 		json_t* modeJ = json_object_get(rootJ, "theme");
-		if (modeJ)
-			theme = json_integer_value(modeJ);
+		if (modeJ){
+			setTheme(json_integer_value(modeJ));
+		}
 	}
 };
 
 struct ASawBWidget : ModuleWidget {
-
-	std::string panelpaths[4] = {"res/qd-001/ASawB.svg","res/qd-001/ASawBAlt.svg","res/qd-001/ASawBMinimalist.svg","res/qd-001/ASawBMinimalistAlt.svg"};
+	int theme = -1;
+	std::string panelpaths[4] = {
+		"res/qd-001/ASawB.svg",
+		"res/qd-001/ASawBAlt.svg",
+		"res/qd-001/ASawBMinimalist.svg",
+		"res/qd-001/ASawBMinimalistAlt.svg"
+	};
 
 	ASawBWidget(ASawB* module) {
 		setModule(module);
 
-		setPanel(createPanel(asset::plugin(pluginInstance, panelpaths[2]),asset::plugin(pluginInstance, panelpaths[3])));
-
-		if(module){
-			int theme = module->getTheme();
-			if(theme>=0){
-			setPanel(createPanel(asset::plugin(pluginInstance, panelpaths[theme])));
-			}
-		}
-
+		setPanel(createPanel(
+			asset::plugin(pluginInstance, "res/qd-001/ASawBMinimalist.svg"),
+			asset::plugin(pluginInstance, "res/qd-001/ASawBMinimalistAlt.svg")
+		));
 		addParam(createParamCentered<QKnob8mm>(mm2px(Vec(18.197, 11.595)), module, ASawB::BIAS_PARAM));
 
 		addInput(createInputCentered<QPort>(mm2px(Vec(7.62, 25.5)), module, ASawB::LA_INPUT));
@@ -142,16 +168,27 @@ struct ASawBWidget : ModuleWidget {
 
 		menu->addChild(new MenuSeparator);
 	
-		menu->addChild(createIndexSubmenuItem("Panel Theme Override", 
-			{"Winter","Melon","Min-Light","Min-Dark"},	
+		menu->addChild(createIndexSubmenuItem(
+			"Panel Theme", 
+			{"Winter", "Melon", "Min-Light", "Min-Dark"},	
 			[=](){
 				return module->getTheme();
 			},
 			[=](int newTheme) {
 				module->setTheme(newTheme);
-				setPanel(createPanel(asset::plugin(pluginInstance, panelpaths[newTheme])));
 			}
 		));
+	}
+	void step() override{
+		ModuleWidget::step();
+		ASawB* module = getModule<ASawB>();
+		if(!module){
+			return;
+		}
+		if(theme != module->theme){
+			theme = module->theme;
+			setPanel(createPanel(asset::plugin(pluginInstance,panelpaths[theme])));
+		}
 	}
 };
 
