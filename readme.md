@@ -82,17 +82,17 @@ By default, parials are calculated once every few samples instead of at audio ra
 *Ultra* recaclculates every other sample.
 ## QD004 Elastic Twin
 Elastic twin is a delay/looper plugin that records to and swaps between two buffers to cut apart and rearrange audio. With no set buffer size, no set delay time, this module is great at making garbled, beautiful messes out of input audio.
-## The Buffers
+### The Buffers
 The plugin’s 2 buffers (more specifically deques) work as following:
 - When writing to a buffer, values are added to the top of the buffer. 
 - When reading a buffer, values are either taken from the top (reverse) or bottom (forward) of the buffer. 
 - Whenever a value is read, it’s re-recorded into the other buffer, and removed from its original place.
-## Buffer Controls
+### Buffer Controls
 Record to Buffer (rec) Toggles whether or not the module is recording
 Clear Buffers (clr) Removes all data from both buffers.
 Swap Buffer Data (swp) Swaps the  data between the two buffers.
 Select Current Buffer (sel) Toggles which of the two buffers is being read from, and which one is being written to. By default Elastic Twin reads from buf2, and writes to buf1.
-## Clocks and Extermal Overrides
+### Clocks and Extermal Overrides
 The module has 2 clocks that can be synced to eachother and can be used to control each of the 4 buffer controls. Each control also has an override input that overrides any internal clock with an external clock, gate, or trig. For toggles any clock or gate input will invert the toggle.
 ## Other Params
 *Feedback* (feed) controls the volume of the audio being re-recorded into the other buffer.
