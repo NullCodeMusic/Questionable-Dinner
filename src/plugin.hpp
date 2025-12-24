@@ -1,5 +1,8 @@
 #pragma once
 #include <rack.hpp>
+#include "palettes.hpp"
+#include <array>
+#include <map>
 
 using namespace rack;
 
@@ -13,8 +16,73 @@ extern Model* modelPilfer;
 extern Model* modelSurgeon;
 extern Model* modelElasticTwins;
 extern Model* modelLoam;
+extern Model* modelFlick;
+extern Model* modelFlickX;
+extern Model* modelGrit;
+extern Model* modelMoxie;
+extern Model* modelYare;
+
+//Custom Panels
+struct QTintPanel : SvgPanel {
+	std::array<unsigned int, 4> colors{};
+	std::shared_ptr<Svg> panel;
+	QTintPanel(){}
+	void draw(const DrawArgs& args) override {
+
+		rack::window::Svg* tintLayer = panel.get();
+		
+		//PUT SHAPE POINTERS INTO MORE ITERABLE FORMAT
+		NSVGshape* shape = tintLayer->handle->shapes;
+		const int numShapes = tintLayer->getNumShapes();
+		int i = 0;
+		NSVGshape* shapes[numShapes];
+		while(shape){
+			shapes[i] = shape;
+			shape = shape->next;
+			i++;
+		}
+		
+		//SAVE ORIGINAL COLORS
+		unsigned int originalColors[numShapes];
+		for(i=0;i<numShapes;i++){
+			originalColors[i]=shapes[i]->fill.color;
+		}
+
+		//MANIPULATE COLORS
+		for(NSVGshape* s : shapes){
+			int key = getChromaKey(s->fill.color);
+			if(key >= 0){
+				s->fill.color = colors[key];
+				s->fill.type = NSVG_PAINT_COLOR;
+			}
+		}
+
+		//DRAW
+		SvgPanel::draw(args);
+
+		//LOAD ORIGINAL COLORS
+		for(i=0;i<numShapes;i++){
+			shapes[i]->fill.color=originalColors[i];
+		}
+
+	}
+	void setColors(std::array<unsigned int, 4> newColors){
+		colors = newColors;
+		
+	}
+};
+
+QTintPanel* createTintPanel(std::string path, std::array<unsigned int, 4> colors);
 
 //Custom Components & Widgets
+struct QKnob6mm : RoundKnob {
+	QKnob6mm() {
+		minAngle = -0.83 * M_PI;
+		maxAngle = 0.83 * M_PI;
+		setSvg(Svg::load(asset::plugin(pluginInstance, "res/knobs/6mm-fg.svg")));
+		bg->setSvg(Svg::load(asset::plugin(pluginInstance, "res/knobs/6mm-bg.svg")));
+	}
+};
 struct QKnob8mm : RoundKnob {
 	QKnob8mm() {
 		minAngle = -0.83 * M_PI;
@@ -41,16 +109,6 @@ struct QKnob18mm : RoundKnob {
 		maxAngle = 0.83 * M_PI;
 
 		setSvg(Svg::load(asset::plugin(pluginInstance, "res/knobs/18mm-fg.svg")));
-		bg->setSvg(Svg::load(asset::plugin(pluginInstance, "res/knobs/18mm-bg.svg")));
-	}
-};
-
-struct QKnob18mmClock : RoundKnob {
-	QKnob18mmClock() {
-		minAngle = -0.83 * M_PI;
-		maxAngle = 0.83 * M_PI;
-
-		setSvg(Svg::load(asset::plugin(pluginInstance, "res/knobs/18mm-fg-clock.svg")));
 		bg->setSvg(Svg::load(asset::plugin(pluginInstance, "res/knobs/18mm-bg.svg")));
 	}
 };

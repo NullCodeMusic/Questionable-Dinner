@@ -24,14 +24,30 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
      inkscape:zoom="2.1184484"
-     inkscape:cx="10.384959"
-     inkscape:cy="257.49978"
+     inkscape:cx="14.633351"
+     inkscape:cy="230.5933"
      inkscape:window-width="2560"
      inkscape:window-height="1494"
      inkscape:window-x="-11"
      inkscape:window-y="-11"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer2" />
+     inkscape:current-layer="layer1"
+     showgrid="true">
+    <inkscape:grid
+       id="grid1"
+       units="mm"
+       originx="0"
+       originy="0"
+       spacingx="1.2700001"
+       spacingy="0.50000001"
+       empcolor="#0099e5"
+       empopacity="0.30196078"
+       color="#0099e5"
+       opacity="0.14901961"
+       empspacing="4"
+       enabled="true"
+       visible="true" />
+  </sodipodi:namedview>
   <defs
      id="defs1" />
   <g
@@ -53,44 +69,46 @@
     <circle
        style="fill:#00ff00;fill-opacity:1;stroke:none;stroke-width:0.444819;stroke-dasharray:0.889631, 0.444819;paint-order:markers fill stroke"
        id="path1"
-       cx="20.334915"
-       cy="101.16821"
+       cx="20.32"
+       cy="72"
        r="4"
-       inkscape:label="Audio" />
+       inkscape:label="Trig" />
     <circle
        style="fill:#0000ff;fill-opacity:1;stroke:none;stroke-width:0.444819;stroke-dasharray:0.889631, 0.444819;paint-order:markers fill stroke"
        id="path1-8-6"
-       cx="20.552555"
-       cy="116.9137"
+       cx="9.9700003"
+       cy="-116"
        r="4"
-       inkscape:label="Audio" />
+       inkscape:label="Env"
+       transform="scale(1,-1)" />
     <circle
-       style="fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.444819;stroke-dasharray:0.889631, 0.444819;paint-order:markers fill stroke"
-       id="circle2"
-       cx="20.316111"
-       cy="64.25"
+       style="fill:#0000ff;fill-opacity:1;stroke:none;stroke-width:0.444819;stroke-dasharray:0.889631, 0.444819;paint-order:markers fill stroke"
+       id="path1-8-6-8"
+       cx="30.480001"
+       cy="-116"
        r="4"
-       inkscape:label="Width" />
-    <circle
-       style="fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.444819;stroke-dasharray:0.889631, 0.444819;paint-order:markers fill stroke"
-       id="path1-1-2"
-       cx="19.65201"
-       cy="50.140244"
-       r="4"
-       inkscape:label="Feedback" />
+       inkscape:label="Wave"
+       transform="scale(1,-1)" />
     <circle
        style="fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.444819;stroke-dasharray:0.889631, 0.444819;paint-order:markers fill stroke"
        id="circle1"
-       cx="19.527115"
-       cy="31.281118"
+       cx="10.16"
+       cy="92.358345"
        r="4"
-       inkscape:label="Factor" />
+       inkscape:label="Stacking" />
+    <circle
+       style="fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.444819;stroke-dasharray:0.889631, 0.444819;paint-order:markers fill stroke"
+       id="circle1-8"
+       cx="30.480001"
+       cy="92.358345"
+       r="4"
+       inkscape:label="Shape" />
     <circle
        style="fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.444819;stroke-dasharray:0.889631, 0.444819;paint-order:markers fill stroke"
        id="circle3"
-       cx="19.527115"
-       cy="18.666737"
+       cx="20.32"
+       cy="20"
        r="4"
-       inkscape:label="Sensitivity" />
+       inkscape:label="Decay" />
   </g>
 </svg>

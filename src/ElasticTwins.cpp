@@ -333,11 +333,7 @@ struct ElasticTwins : Module {
 
 struct ElasticTwinsWidget : ModuleWidget {
 	int theme = -1;
-	std::string panelpaths[3] = {
-		"res/panels/ElasticTwin.svg",
-		"res/panels/ElasticTwinMinDark.svg",
-		"res/panels/ElasticTwinMinLight.svg"
-	};
+
 	ElasticTwinsWidget(ElasticTwins* module) {
 		setModule(module);
 		setPanel(createPanel(asset::plugin(pluginInstance, "res/panels/ElasticTwin.svg")));
@@ -378,7 +374,7 @@ struct ElasticTwinsWidget : ModuleWidget {
 	
 		menu->addChild(createIndexSubmenuItem(
 			"Panel Theme", 
-			{"Main","Min-Dark","Min-Light"},	
+			getPaletteNames(),	
 			[=](){
 				return module->getTheme();
 			},
@@ -386,6 +382,10 @@ struct ElasticTwinsWidget : ModuleWidget {
 				module->setTheme(newTheme);
 			}
 		));
+
+		menu->addChild(createMenuItem("Use Classic Theme","",[=](){
+			module->setTheme(-2);
+		}));
 	}
 	void step() override {
 		ModuleWidget::step();
@@ -395,7 +395,14 @@ struct ElasticTwinsWidget : ModuleWidget {
 		}
 		if(theme != module->theme){
 			theme = module->theme;
-			setPanel(createPanel(asset::plugin(pluginInstance,panelpaths[theme])));
+			if(theme>=0){
+				setPanel(createTintPanel(
+					"res/panels/ElasticTwinTintLayers.svg",
+					getPalette(theme)
+				));
+			}else{
+				setPanel(createPanel(asset::plugin(pluginInstance,"res/panels/ElasticTwin.svg")));
+			}
 		}
 	}
 };

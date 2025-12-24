@@ -1012,3 +1012,13 @@ double lu_sin(double pos){
     double out = sintable[minpos]*lerpAmt + sintable[maxpos]*(1-lerpAmt);
     return out/8191.875-4;
 }
+
+double lu_sinUnit(double pos){
+    double bigpos = (pos-floor(pos))*8000;
+    int minpos = floor(bigpos);
+    minpos=minpos%8000;
+    int maxpos = (minpos + 1)%8000;
+    double lerpAmt = bigpos-minpos;
+    double out = sintable[minpos]*lerpAmt + sintable[maxpos]*(1-lerpAmt);
+    return out/32767.5-1;
+}

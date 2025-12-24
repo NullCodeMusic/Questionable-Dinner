@@ -1,5 +1,6 @@
 #include "plugin.hpp"
 #include <cmath>
+#include "palettes.hpp"
 
 struct Pilfer : Module {
 	//Copy Pase Channel Themes Stuff
@@ -361,15 +362,10 @@ struct Pilfer : Module {
 
 struct PilferWidget : ModuleWidget {
 	int theme = -1;
-	std::string panelpaths[3] = {
-		"res/qd-002/Pilfer.svg",
-		"res/qd-002/PilferMinDark.svg",
-		"res/qd-002/PilferMinLight.svg"
-	};
 	PilferWidget(Pilfer* module) {
 		setModule(module);
 
-		setPanel(createPanel(asset::plugin(pluginInstance, "res/qd-002/Pilfer.svg")));
+		setPanel(createPanel(asset::plugin(pluginInstance,"res/qd-002/Pilfer.svg")));
 
 		addParam(createParam<QSegParam>(mm2px(Vec(48.25, 9.00)), module, Pilfer::OVERSAMPLE_PARAM));
 
@@ -417,7 +413,7 @@ struct PilferWidget : ModuleWidget {
 	
 		menu->addChild(createIndexSubmenuItem(
 			"Panel Theme", 
-			{"Main","Min Dark","Min Light"},	
+			getPaletteNames(),	
 			[=](){
 				return module->getTheme();
 			},
@@ -425,6 +421,10 @@ struct PilferWidget : ModuleWidget {
 				module->setTheme(newTheme);
 			}
 		));
+
+		menu->addChild(createMenuItem("Use Classic Theme","",[=](){
+			module->setTheme(-2);
+		}));
 	}
 	void step() override {
 		ModuleWidget::step();
@@ -434,7 +434,14 @@ struct PilferWidget : ModuleWidget {
 		}
 		if(theme != module->theme){
 			theme = module->theme;
-			setPanel(createPanel(asset::plugin(pluginInstance,panelpaths[theme])));
+			if(theme>=0){
+				setPanel(createTintPanel(
+					"res/panels/PilferTintLayers.svg",
+					getPalette(theme)
+				));
+			}else{
+				setPanel(createPanel(asset::plugin(pluginInstance,"res/panels/Pilfer.svg")));
+			}
 		}
 	}
 };

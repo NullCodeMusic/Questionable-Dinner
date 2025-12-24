@@ -59,7 +59,7 @@ struct ASawB : Module {
 
 	int channels = 1;
 
-	void onPortChange (const PortChangeEvent& e) override{
+	void process(const ProcessArgs& args) override {
 
 		channels = std::max({
 			inputs[LA_INPUT].getChannels(),
@@ -71,14 +71,8 @@ struct ASawB : Module {
 		});
 
 		for(int i = 0; i < OUTPUTS_LEN; i++){
-
 			outputs[i].setChannels(channels);
-
 		}
-
-	}
-
-	void process(const ProcessArgs& args) override {
 
 		float bias = params[BIAS_PARAM].getValue();
 
@@ -130,20 +124,15 @@ struct ASawB : Module {
 
 struct ASawBWidget : ModuleWidget {
 	int theme = -1;
-	std::string panelpaths[4] = {
-		"res/qd-001/ASawB.svg",
-		"res/qd-001/ASawBAlt.svg",
-		"res/qd-001/ASawBMinimalist.svg",
-		"res/qd-001/ASawBMinimalistAlt.svg"
-	};
 
 	ASawBWidget(ASawB* module) {
 		setModule(module);
 
-		setPanel(createPanel(
-			asset::plugin(pluginInstance, "res/qd-001/ASawBMinimalist.svg"),
-			asset::plugin(pluginInstance, "res/qd-001/ASawBMinimalistAlt.svg")
+		setPanel(createTintPanel(
+			"res/panels/AsawBTintLayers.svg",
+			getPalette(PAL_LIGHT)
 		));
+
 		addParam(createParamCentered<QKnob8mm>(mm2px(Vec(18.197, 11.595)), module, ASawB::BIAS_PARAM));
 
 		addInput(createInputCentered<QPort>(mm2px(Vec(7.62, 25.5)), module, ASawB::LA_INPUT));
@@ -167,10 +156,10 @@ struct ASawBWidget : ModuleWidget {
 		ASawB* module = getModule<ASawB>();
 
 		menu->addChild(new MenuSeparator);
-	
+
 		menu->addChild(createIndexSubmenuItem(
 			"Panel Theme", 
-			{"Winter", "Melon", "Min-Light", "Min-Dark"},	
+			getPaletteNames(),	
 			[=](){
 				return module->getTheme();
 			},
@@ -179,6 +168,7 @@ struct ASawBWidget : ModuleWidget {
 			}
 		));
 	}
+
 	void step() override{
 		ModuleWidget::step();
 		ASawB* module = getModule<ASawB>();
@@ -187,7 +177,10 @@ struct ASawBWidget : ModuleWidget {
 		}
 		if(theme != module->theme){
 			theme = module->theme;
-			setPanel(createPanel(asset::plugin(pluginInstance,panelpaths[theme])));
+			setPanel(createTintPanel(
+				"res/panels/AsawBTintLayers.svg",
+				getPalette(theme)
+			));
 		}
 	}
 };

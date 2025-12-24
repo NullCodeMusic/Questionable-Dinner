@@ -74,6 +74,8 @@ struct Loam : Module {
 		configParam(FEED_MOD_PARAM, -1.f, 1.f, 0.f, "Feedback Mod");
 		configParam(CHAOS_MOD_PARAM, -1.f, 1.f, 0.f, "Radioactivity Mod");
 		configParam(DRIVE_MOD_PARAM, -1.f, 1.f, 0.f, "Gain Mod");
+
+		configBypass(AUDIO_INPUT,LP_OUTPUT);
 	}
 
 	float lp[16] = {0.f};
@@ -99,17 +101,13 @@ struct Loam : Module {
 		minFreq = pow(8/magicNumber,2);
 	}
 
-	void onPortChange(const PortChangeEvent& e) override{
+	int channels = 1;
+
+	void process(const ProcessArgs& args) override {
 
 		channels = inputs[AUDIO_INPUT].getChannels();
 		outputs[LP_OUTPUT].setChannels(channels);
 		outputs[HP_OUTPUT].setChannels(channels);
-
-	}
-
-	int channels = 1;
-
-	void process(const ProcessArgs& args) override {
 
 		//Read Params
 		float freqParam = params[FACTOR_PARAM].getValue();
@@ -185,11 +183,6 @@ struct Loam : Module {
 
 struct LoamWidget : ModuleWidget {
 	int theme = -1;
-	std::string panelpaths[3] = {
-		"res/panels/Loam.svg",
-		"res/panels/LoamMinDark.svg",
-		"res/panels/LoamMinLight.svg"
-	};
 
 	LoamWidget(Loam* module) {
 		setModule(module);
@@ -225,7 +218,7 @@ struct LoamWidget : ModuleWidget {
 	
 		menu->addChild(createIndexSubmenuItem(
 			"Panel Theme", 
-			{"Main","Min-Dark","Min-Light"},	
+			getPaletteNames(),	
 			[=](){
 				return module->getTheme();
 			},
@@ -233,6 +226,10 @@ struct LoamWidget : ModuleWidget {
 				module->setTheme(newTheme);
 			}
 		));
+
+		menu->addChild(createMenuItem("Use Classic Theme","",[=](){
+			module->setTheme(-2);
+		}));
 	}
 
 	void step() override {
@@ -243,7 +240,14 @@ struct LoamWidget : ModuleWidget {
 		}
 		if(theme != module->theme){
 			theme = module->theme;
-			setPanel(createPanel(asset::plugin(pluginInstance,panelpaths[theme])));
+			if(theme>=0){
+				setPanel(createTintPanel(
+					"res/panels/LoamTintLayers.svg",
+					getPalette(theme)
+				));
+			}else{
+				setPanel(createPanel(asset::plugin(pluginInstance,"res/panels/Loam.svg")));
+			}
 		}
 	}
 };

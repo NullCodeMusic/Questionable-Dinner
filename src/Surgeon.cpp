@@ -1,6 +1,7 @@
 #include "plugin.hpp"
 #include "tinyexpr.h"
 #include "lookups.hpp"
+#include "palettes.hpp"
 #include <cstdlib>
 
 
@@ -420,14 +421,15 @@ struct Surgeon : Module {
 
 struct SurgeonWidget : ModuleWidget {
 	int theme = -1;
-	std::string panelpaths[3] = {
-		"res/qd-003/Surgeon.svg",
-		"res/qd-003/SurgeonMinDark.svg",
-		"res/qd-003/SurgeonMinLight.svg"
-	};
+	QTintPanel* tintPanel;
 	SurgeonWidget(Surgeon* module) {
 		setModule(module);
-		setPanel(createPanel(asset::plugin(pluginInstance, "res/qd-003/Surgeon.svg")));
+
+		tintPanel = createTintPanel(
+			"res/panels/SurgeonTintLayers.svg",
+			getPalette(PAL_PEACHBERRY)
+		);
+		setPanel(tintPanel);
 
 		addParam(createParam<QBigNumber>(mm2px(Vec(32,64.5)), module, Surgeon::NUM_PARAM));
 		addParam(createParamCentered<VCVButton>(mm2px(Vec(16.51,70.5)), module, Surgeon::FREEZE_BUTTON));
@@ -469,7 +471,7 @@ struct SurgeonWidget : ModuleWidget {
 	
 		menu->addChild(createIndexSubmenuItem(
 			"Panel Theme", 
-			{"Main", "Min-Dark", "Min-Light"},	
+			getPaletteNames(),	
 			[=](){
 				return module->getTheme();
 			},
@@ -477,6 +479,10 @@ struct SurgeonWidget : ModuleWidget {
 				module->setTheme(newTheme);
 			}
 		));
+
+		menu->addChild(createMenuItem("Use Classic Theme","",[=](){
+			module->setTheme(-2);
+		}));
 
 		menu->addChild(createIndexSubmenuItem(
 			"Quality", 
@@ -521,9 +527,19 @@ struct SurgeonWidget : ModuleWidget {
 			module->infodisplay->color = nvgRGBAf(1,1,1,0.5);
 		}
 
+		if(!module){
+			return;
+		}
 		if(theme != module->theme){
 			theme = module->theme;
-			setPanel(createPanel(asset::plugin(pluginInstance,panelpaths[theme])));
+			if(theme>=0){
+				setPanel(createTintPanel(
+					"res/panels/SurgeonTintLayers.svg",
+					getPalette(theme)
+				));
+			}else{
+				setPanel(createPanel(asset::plugin(pluginInstance,"res/panels/Surgeon.svg")));
+			}
 		}
 	}
 };

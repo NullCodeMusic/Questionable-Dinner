@@ -60,3 +60,10 @@ struct staque
 		data.swap(s->data);
 	}
 };
+
+float softFold05(float val);
+
+float exp2Decay(float val, float time, float sr);
+
+float mxyRound(float val, float shape);
+float mxySpike(float val, float shape);
