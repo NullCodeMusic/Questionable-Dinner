@@ -21,6 +21,8 @@ extern Model* modelFlickX;
 extern Model* modelGrit;
 extern Model* modelMoxie;
 extern Model* modelYare;
+extern Model* modelNotable;
+
 
 //Custom Panels
 struct QTintPanel : SvgPanel {

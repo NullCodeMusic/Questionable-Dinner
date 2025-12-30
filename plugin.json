@@ -1,7 +1,7 @@
 {
   "slug": "QuestionableDinner",
   "name": "Questionable Dinner",
-  "version": "2.0.6",
+  "version": "2.0.7",
   "license": "Apache-2.0",
   "brand": "Questionable Dinner",
   "author": "Rox Wilson",
@@ -68,7 +68,8 @@
       "name": "Flick",
       "description": "Generate impulses for resonators. Twice!",
       "tags": [
-        "Physical modeling", "dual"
+        "Physical modeling",
+        "dual"
       ]
     },
     {
@@ -76,7 +77,8 @@
       "name": "Flick-EXT",
       "description": "Pitch and level inputs for Flick.",
       "tags": [
-        "Physical modeling", "dual"
+        "Physical modeling",
+        "dual"
       ]
     },
     {
@@ -84,7 +86,8 @@
       "name": "Graze",
       "description": "",
       "tags": [
-        "distortion","Envelope follower"
+        "distortion",
+        "Envelope follower"
       ]
     },
     {
@@ -101,6 +104,15 @@
         "function generator",
         "clock generator",
         "clock modulator"
+      ]
+    },
+    {
+      "slug": "Notable",
+      "name": "The Funnel",
+      "description": "A pitch & gate utility module.",
+      "tags": [
+        "utility",
+        "sample and hold"
       ]
     },
     {
