@@ -129,7 +129,7 @@ struct ASawBWidget : ModuleWidget {
 		setModule(module);
 
 		setPanel(createTintPanel(
-			"res/panels/AsawBTintLayers.svg",
+			"res/panels/ASawBTintLayers.svg",
 			getPalette(PAL_LIGHT)
 		));
 
@@ -178,7 +178,7 @@ struct ASawBWidget : ModuleWidget {
 		if(theme != module->theme){
 			theme = module->theme;
 			setPanel(createTintPanel(
-				"res/panels/AsawBTintLayers.svg",
+				"res/panels/ASawBTintLayers.svg",
 				getPalette(theme)
 			));
 		}

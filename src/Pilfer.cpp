@@ -365,7 +365,7 @@ struct PilferWidget : ModuleWidget {
 	PilferWidget(Pilfer* module) {
 		setModule(module);
 
-		setPanel(createPanel(asset::plugin(pluginInstance,"res/qd-002/Pilfer.svg")));
+		setPanel(createPanel(asset::plugin(pluginInstance,"res/panels/Pilfer.svg")));
 
 		addParam(createParam<QSegParam>(mm2px(Vec(48.25, 9.00)), module, Pilfer::OVERSAMPLE_PARAM));
 
