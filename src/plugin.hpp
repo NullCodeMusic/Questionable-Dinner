@@ -22,7 +22,7 @@ extern Model* modelGrit;
 extern Model* modelMoxie;
 extern Model* modelYare;
 extern Model* modelNotable;
-
+extern Model* modelOrganism;
 
 //Custom Panels
 struct QTintPanel : SvgPanel {
@@ -193,6 +193,7 @@ struct QBigNumber : SvgKnob {
 struct QInfoText : LedDisplay {
 	std::string text = "SURGEON";
 	NVGcolor color = nvgRGBAf(1,1,1,0.82);
+	float size = 13.4f;
 	void draw(const DrawArgs& args) override {}
 	void drawLayer(const DrawArgs& args, int layer) override {
 		if(layer == 1){
@@ -205,7 +206,7 @@ struct QInfoText : LedDisplay {
 				// Select font handle
 				nvgFontFaceId(args.vg, font->handle);
 				// Set font size and alignment
-				nvgFontSize(args.vg, 13.4);
+				nvgFontSize(args.vg, size);
 				nvgTextAlign(args.vg, NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
 
 				// Draw the text at a position

@@ -124,6 +124,14 @@
         "Voltage-controlled amplifier",
         "distortion"
       ]
+    },
+    {
+      "slug": "Organism",
+      "name": "Organism",
+      "description": "Additive synthesis macro oscillator",
+      "tags": [
+        "Oscillator", "synth voice"
+      ]
     }
   ]
 }
