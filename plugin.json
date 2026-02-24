@@ -50,7 +50,8 @@
       "description": "Record and swap buffers to delay and garble audio.",
       "tags": [
         "Delay",
-        "Granular"
+        "Granular", "effect",
+        "Polyphonic"
       ]
     },
     {
@@ -87,7 +88,8 @@
       "description": "",
       "tags": [
         "distortion",
-        "Envelope follower"
+        "Envelope follower", "effect",
+        "Polyphonic"
       ]
     },
     {
@@ -112,7 +114,8 @@
       "description": "A pitch & gate utility module.",
       "tags": [
         "utility",
-        "sample and hold"
+        "sample and hold",
+        "Polyphonic"
       ]
     },
     {
@@ -122,7 +125,8 @@
       "tags": [
         "compressor",
         "Voltage-controlled amplifier",
-        "distortion"
+        "distortion", "effect",
+        "Polyphonic"
       ]
     },
     {
@@ -130,8 +134,35 @@
       "name": "Organism",
       "description": "Additive synthesis macro oscillator",
       "tags": [
-        "Oscillator", "synth voice"
+        "Oscillator", "synth voice", "Polyphonic"
       ]
+    },
+    {
+      "slug": "Simmer",
+      "name": "Simmer",
+      "description": "Trig-Based melody machine",
+      "tags": [
+        "Arpeggiator"
+      ]
+    },
+    {
+      "slug": "DialecticFilter",
+      "name": "Dead Meat",
+      "description": "Precision chaos",
+      "tags": [
+        "Filter",
+        "Distortion",
+        "Polyphonic"
+      ]
+    },
+    {
+      "slug": "Ivory",
+      "name": "Ivory",
+      "description": "Ray-casted delay",
+      "tags": [
+        "Delay","Reverb"
+      ],
+      "hidden":true
     }
   ]
 }

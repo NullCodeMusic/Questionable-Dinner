@@ -23,6 +23,9 @@ extern Model* modelMoxie;
 extern Model* modelYare;
 extern Model* modelNotable;
 extern Model* modelOrganism;
+extern Model* modelSimmer;
+extern Model* modelDialecticFilter;
+extern Model* modelIvory;
 
 //Custom Panels
 struct QTintPanel : SvgPanel {

@@ -53,27 +53,35 @@ struct Grit : Module {
 		configBypass(MAIN_INPUT,MAIN_OUTPUT);
 	}
 
-	float env;
+	float env[16] = {};
 
 	void process(const ProcessArgs& args) override {
 		float audio = inputs[MAIN_INPUT].getVoltageSum()/std::max(inputs[MAIN_INPUT].getChannels(),1);
 		float dec = 1/dsp::exp2_taylor5(params[BITE_PARAM].getValue());
 		float noise = rand()%1000-500;
-		noise = inputs[HISS_INPUT].getNormalVoltage(noise/100.f)/5.f;
-		noise = noise*params[HISS_PARAM].getValue();
-		env = std::max(abs(audio)-noise,exp2Decay(env,dec,args.sampleRate));
-		outputs[ENV_OUTPUT].setVoltage(env);
-		float scaledAudio = audio/env;
-		if(std::isnan(scaledAudio)){
-			scaledAudio=0;
+		//Poly from hiss
+		int channels = std::max(inputs[HISS_INPUT].getChannels(),1);
+		outputs[MAIN_OUTPUT].setChannels(channels);
+		outputs[ENV_OUTPUT].setChannels(channels);
+		outputs[AUX_OUTPUT].setChannels(channels);
+		//Main algo
+		for(int i = 0;i<channels;i++){
+			noise = inputs[HISS_INPUT].getNormalVoltage(noise/100.f)/5.f;
+			noise = noise*params[HISS_PARAM].getValue();
+			env[i] = std::max(abs(audio)-noise,exp2Decay(env[i],dec,args.sampleRate));
+			outputs[ENV_OUTPUT].setVoltage(env[i],i);
+			float scaledAudio = audio/env[i];
+			if(std::isnan(scaledAudio)){
+				scaledAudio=0;
+			}
+			float drive = dsp::exp2_taylor5(params[DRIVE_PARAM].getValue());
+			scaledAudio *= drive;
+			scaledAudio = softClip(scaledAudio,1,params[KNEE_PARAM].getValue());
+			scaledAudio /= softClip(drive,1,params[KNEE_PARAM].getValue());
+			scaledAudio *= env[i];
+			outputs[MAIN_OUTPUT].setVoltage(scaledAudio,i);
+			outputs[AUX_OUTPUT].setVoltage(scaledAudio-audio,i);
 		}
-		float drive = dsp::exp2_taylor5(params[DRIVE_PARAM].getValue());
-		scaledAudio *= drive;
-		scaledAudio = softClip(scaledAudio,1,params[KNEE_PARAM].getValue());
-		scaledAudio /= softClip(drive,1,params[KNEE_PARAM].getValue());
-		scaledAudio *= env;
-		outputs[MAIN_OUTPUT].setVoltage(scaledAudio);
-		outputs[AUX_OUTPUT].setVoltage(scaledAudio-audio);
 	}
 };
 

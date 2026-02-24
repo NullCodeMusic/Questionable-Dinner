@@ -1,7 +1,6 @@
 #include "plugin.hpp"
 #include "mymath.hpp"
 
-
 struct Yare : Module {
 	int theme = -1;
 	enum ParamId {

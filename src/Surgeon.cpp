@@ -1,6 +1,6 @@
 #include "plugin.hpp"
 #include "tinyexpr.h"
-#include "lookups.hpp"
+#include "mymath.hpp"
 #include "palettes.hpp"
 #include <cstdlib>
 
@@ -314,9 +314,11 @@ struct Surgeon : Module {
 				baseTrigTime[iint] --;
 			}
 			float adjustedSineTime = (baseTrigTime[iint]+lerpPhase);
-			audioOut += lu_sin(adjustedSineTime) * lerpAmp;
+			adjustedSineTime -= floor(adjustedSineTime);
+			audioOut += sin_2pi_9(adjustedSineTime) * lerpAmp;
 		}
 		if(!std::isnan(audioOut)){
+			audioOut *= 5;
 			outputs[OUT_OUTPUT].setVoltage(audioOut);
 			out = audioOut;
 		}

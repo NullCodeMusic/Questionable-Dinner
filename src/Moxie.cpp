@@ -1,6 +1,5 @@
 #include "plugin.hpp"
 #include "mymath.hpp"
-#include "lookups.hpp"
 
 struct Moxie : Module {
 	int theme = -1;
