@@ -42,29 +42,7 @@ The v output is the absolute value of the particle’s current velocity (after a
 There are two red lights at the top of the module. The top light’s brightness is determined by a particle’s velocity and the bottom light pulses when the particle bounces. Generally, the brighter both lights are, the less stable the sound.
 ## QD003 Surgeon
 Surgeon is a text based and fully programmable additive oscillator. It controls up to 64 sine wave partials using typed-in math expressions.
-### Expressions
-There are 9 total expressions that can be programmed into this oscillator. All of these are calculated on a per-partial basis (variables i and n are used to get the index of the current partial, and the number of total partials). The header changes to tell you what expression you currently have hovered. From top to bottom, the expressions are:
-*Variable* `j` - A variable that can be referenced in expressions.
-*Variable* `k` - A variable that can be referenced in expressions.
-*Variable* `l` - A variable that can be referenced in expressions.
-*Time Warp* - An offset to the envelope, phase, and the time variable, `t`. 
-*Env Attack* - The number of seconds it takes for the envelope to rise.
-*Env Decay* - The number of seconds it takes for the envelope to fall.
-*Pitch* - The pitch distribution of partials.
-*Amp* - The amplitude distribution of partials.
-*Phase* - The phase distribution of partials. When the expression is set to 0, phase is not reset on trig.
-Note: These expressions are calculated in order from top to bottom, per-partial. If you reference them out of order, calculations will no longer line up with the correct current partial index, `i`. Sometimes this can be fixed by substituting `i` with (`i-1`) or something else to compensate for the shift but this might not always work.
-### Variables & Constants
-`i` - The index of the current partial, starting at 1
-`n` - The total number of partials
-`r` - Sample and hold random per partial. 
-`t` - Time since last trig
-`f` - Base frequency in hz, defined by v/Oct input
-`e` - Envelope
-`out` - Previous oscillator output
-`x`, `y`, and `z` - Param/CV in 
-`j`, `k`, and `l` - User defined variables
-`pi`
+
 ### Trig
 The trig input serves both as a signal to tell the oscillator to compile the typed math expressions and the start of a note.
 ### Freeze
@@ -89,11 +67,15 @@ The plugin’s 2 buffers (more specifically deques) work as following:
 - Whenever a value is read, it’s re-recorded into the other buffer, and removed from its original place.
 ### Buffer Controls
 Record to Buffer (rec) Toggles whether or not the module is recording
+
 Clear Buffers (clr) Removes all data from both buffers.
+
 Swap Buffer Data (swp) Swaps the  data between the two buffers.
+
 Select Current Buffer (sel) Toggles which of the two buffers is being read from, and which one is being written to. By default Elastic Twin reads from buf2, and writes to buf1.
 ### Clocks and Extermal Overrides
 The module has 2 clocks that can be synced to eachother and can be used to control each of the 4 buffer controls. Each control also has an override input that overrides any internal clock with an external clock, gate, or trig. For toggles any clock or gate input will invert the toggle.
 ## Other Params
 *Feedback* (feed) controls the volume of the audio being re-recorded into the other buffer.
+
 *Smooth* (smth) Makes audio less harsh by tapering out the volume of recordings before and after a buffer control is triggered or toggled. The control value is how many milliseconds the transition takes.
