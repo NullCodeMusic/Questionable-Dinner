@@ -297,11 +297,11 @@ Particles [`;*.:`]:
 > **Morph** adds a pitch effect to the envelopes.
 
 Prism [`Prsm`]:
-> Power series stack of partials.
+> Comb filter, but in pitch space.
 > 
-> **Structure** controls power scaling of partials.
+> **Structure** controls the width of the comb filter.
 >
-> **Morph** controls linear scaling of partials.
+> **Morph** changes how it affects oscillator pitch.
 
 Chaotic [`Dice`]:
 > Randomly detuned partials.
