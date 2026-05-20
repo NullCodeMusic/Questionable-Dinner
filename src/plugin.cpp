@@ -22,7 +22,9 @@ void init(Plugin* p) {
 	p->addModel(modelOrganism);
 	p->addModel(modelSimmer);
 	p->addModel(modelDialecticFilter);
-	p->addModel(modelIvory);
+	p->addModel(modelWeather);
+	p->addModel(modelBoxes);
+	p->addModel(modelOTamer);
 	// Any other plugin initialization may go here.
 	// As an alternative, consider lazy-loading assets and lookup tables when your module is created to reduce startup times of Rack.
 }

@@ -151,6 +151,8 @@ Graze is a distortion module that follows input peaks to preserve original ampli
 > Sending polyphonic signals into the rasp input creates polyphonic outputs.
 >
 > **Knee** controls the curve of the clipper. Lower knee is softer clipping.
+>
+> **Bass Split** sends low frequencies through without getting distorted.
 
 ## QD008 Moxie
 Moxie is an extremely flexible power starved double VCO/accumulator. It splits signals from the **power** input into positive and negative, then uses them to drive 2 oscillators. 
@@ -160,20 +162,26 @@ Moxie is an extremely flexible power starved double VCO/accumulator. It splits s
 >
 > **Frequency** determines the base frequency of the oscillator.
 >
-> **Bite** is a general harshness parameter. In the base model, it's envelope decay. In waveshaping models, it's the amount of shaping applied. Does nothing for clock model.
+> **Bite** is a general shape parameter. To the right is generally brighter or harsher shapes.
 >
 > **Morph** controls the the amplitude of both oscillators through the main output.
 >
 
 ### Models, Modes and States
 This module has 5 different models, 2 modes, and 2 states that shape how it functions, for a total of 20 different configurations.
->**Models**: 
+>**Models**:
 >
->**The base model** (no light) works by accumulating voltage and then releasing the voltage as an envelope pulse. The outputs are the accumulated voltage plus the envelope pulse creating a tri-saw wave by default.
+>*Current model is indicated by light color*
 >
->**The waveshaping models** (green, blue, yellow) work by using accumulated voltage as phase for a sine oscillator, and waveshaping it. Blue is a smoother waveshaper, green is a harsher waveshaper, and yellow is a combination of both.
+>**Light Off: The base model** works by accumulating voltage and then releasing the voltage as an envelope pulse. The outputs are the accumulated voltage plus the envelope pulse creating a tri-saw wave by default. The **bite** parameter controls the envelope's decay.
 >
->**The clock model** (red) emits a pulse when the accumulator fires. It's tuned to a lower frequency for ease of use.
+>**Blue Light: The square model** creates a square wave based on the current state of the accumulators. The **bite** parameter controls the pulse width.
+>
+>**Green Light: The sine warp model** creates a warped sine wave based on the current state of the accumulators. The **bite** parameter works similar to pulse width, and bends the sine into a tighter shape.
+>
+>>**Yello Light: The sine pulse model** creates a short percussive sine wave pulse when the accumulators fire. The **bite** parameter controls the speed of the pulse.
+>
+>**Red Light: The clock model** (red) emits a trigger when the accumulators fire. It's tuned to a lower frequency for ease of use. The **bite** parameter does nothing.
 >
 >**Mode**:
 >
@@ -202,7 +210,6 @@ Yare is a simple peak normalizing module. Incoming audio is scaled to an amplitu
 >
 > **Mix** Is the overall dry/wet mix for the effect.
 ## QD011 Organism
-
 
 ## QD012 Simmer
 

@@ -149,7 +149,7 @@ struct Notable : Module {
 		float maxVoltage = params[MAX_PARAM].getValue();
 		float minVoltage = params[MIN_PARAM].getValue();
 		bool zig = params[MEMORY_PARAM].getValue() < 0.5;
-		int voltageRange = abs(maxVoltage-minVoltage);
+		int voltageRange = std::max((int)abs(maxVoltage-minVoltage),1);
 		int channels = inputs[GATE_INPUT].getChannels();
 		int voices = params[POLY_PARAM].getValue();
 		vm.voices = voices;
@@ -172,6 +172,7 @@ struct Notable : Module {
 		
 
 		//Wrap Notes
+
 		while(currentNote>maxVoltage){
 			currentNote-=voltageRange;
 		}

@@ -1,10 +1,9 @@
 #include "additive.hpp"
+#include <cstdlib>
 
 using namespace rack;
 using namespace simd;
 using namespace additive;
-
-#include "mymath.hpp"
 
 Algorithm::~Algorithm(){}
 
@@ -50,7 +49,7 @@ void Organ::process(float freq,float n,float deltaTime,float prev,float structur
         i+=4;
         j*=j_pow4;
         partials[PI_FREQ][idx] = j*k/i;
-        partials[PI_AMP][idx] = 1.f/i;
+        partials[PI_AMP][idx] = 1.f/j;
     }
 }
 //Low-Qual <LowQ>
@@ -200,9 +199,6 @@ void Prism::process(float freq,float n,float deltaTime,float prev,float structur
     }
 }
 //Chaotic <Dice> (shimmer in presets)
-inline float_4 rand4(){
-    return float_4(rand()%1000,rand()%1000,rand()%1000,rand()%1000)/1000.f;
-}
 void Chaotic::process(float freq,float n,float deltaTime,float prev,float structure,float morph){
     //Original Surgeon Patch
     //i*f*(1-r*z)
@@ -210,9 +206,9 @@ void Chaotic::process(float freq,float n,float deltaTime,float prev,float struct
     //Structure to rand seed, morph is z
     n/=4;
     float_4 i = {1,2,3,4};
-    srand(structure*1000);
+    prng.reseedSoft(structure*1000);
     for(int idx = 0; idx < n; idx++){
-        partials[PI_FREQ][idx] = 1+rand4()*morph;
+        partials[PI_FREQ][idx] = 1+prng.output[idx]*morph;
         partials[PI_AMP][idx] = 1/i;
         i+=4;
     }
@@ -231,13 +227,13 @@ void Noise::process(float freq,float n,float deltaTime,float prev,float structur
     n/=4;
     float_4 i = {1,2,3,4};
     float lerp = (morph+1)/2;
-    srand(time);
-    if(random::u32()%1000<=dsp::exp2_taylor5((structure+1)*5)){
+    prng.reseedSoft(time);
+    if(random::u32()%5000<=dsp::exp2_taylor5((structure+1)*5)){
         time++;
     }
     float_4 r;
     for(int idx = 0; idx < n; idx++){
-        r = rand4();
+        r = prng.output[idx];
         partials[PI_FREQ][idx] = 1+20000*r*lerp/i/freq-lerp;
         partials[PI_AMP][idx] = 1/n;
         partials[PI_PHASE][idx] = r;
@@ -365,4 +361,62 @@ void PianoBrass::process(float freq,float n,float deltaTime,float prev,float str
         partials[PI_AMP][idx] = float_4(pianoAmp[(int)i[0]-1],pianoAmp[(int)i[1]-1],pianoAmp[(int)i[2]-1],pianoAmp[(int)i[3]-1])/i*filter;
         i+=4;
     }
+}
+
+void BlendFilter::process(){
+    if(pSum != center+bias+width+amount+dither+type+(preserveFund*0.5)){
+        pSum = center+bias+width+amount+dither+type+(preserveFund*0.5);
+    }else{
+        return;
+    }
+    float n = MAX_PARTIALS;
+    float_4 i = {1,2,3,4};
+    float k; 
+    switch (type) {
+        case FTYPE_HIGHPASS:
+            i = {1,2,3,4};
+            k = -center+width/2+bias*width;
+            for(int idx = 0; idx < n; idx++){
+                partials[idx] = clamp((i+k)*amount/width,bias,amount);
+                i+=4;
+            }
+            break;
+        case FTYPE_LOWPASS:
+            i = {1,2,3,4};
+            k = center+width/2+bias*width;
+            for(int idx = 0; idx < n; idx++){
+                partials[idx] = clamp((-i+k)*amount/width,bias,amount);
+                i+=4;
+            }
+            break;
+        case FTYPE_NOTCH:
+            i = {1,2,3,4};
+            for(int idx = 0; idx < n; idx++){
+                partials[idx] = clamp((simd::abs(i-center))*amount/width,bias,amount);
+                i+=4;
+            }
+            break;
+        case FTYPE_BANDPASS:
+            i = {1,2,3,4};
+            for(int idx = 0; idx < n; idx++){
+                partials[idx] = clamp(1-(simd::abs(i-center))*amount/width,bias,amount);
+                i+=4;
+            }
+    }
+
+    if(preserveFund){
+        partials[0][0]=0;
+    }
+
+    if(dither == 0){return;}
+    i = {1,2,3,4};
+    int d = std::abs(dither)+1;
+    float d2 = dither>=0 ? 0 : 1;
+    for(int idx = 0; idx < n; idx++){
+            partials[idx][0] = int(i[0])%d == 1 ? d2 : partials[idx][0];  
+            partials[idx][1] = int(i[1])%d == 1 ? d2 : partials[idx][1];  
+            partials[idx][2] = int(i[2])%d == 1 ? d2 : partials[idx][2]; 
+            partials[idx][3] = int(i[3])%d == 1 ? d2 : partials[idx][3];
+            i+=4;
+        }
 }

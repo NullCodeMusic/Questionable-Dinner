@@ -9,6 +9,9 @@ struct Grit : Module {
 		BITE_PARAM,
 		DRIVE_PARAM,
 		KNEE_PARAM,
+		BASS_PARAM,
+		HISS_SWITCH,
+		BASS_SWITCH,
 		PARAMS_LEN
 	};
 	enum InputId {
@@ -51,12 +54,23 @@ struct Grit : Module {
 		configOutput(AUX_OUTPUT,"Aux");
 		configOutput(ENV_OUTPUT,"Env");
 		configBypass(MAIN_INPUT,MAIN_OUTPUT);
+
+		configSwitch(HISS_SWITCH, 0, 1, 0, "Rasp Mode", {"A","B"});
+		configSwitch(BASS_SWITCH, 0, 1, 0, "Bass Split", {"Off","On"});
+
 	}
 
 	float env[16] = {};
+	dsp::RCFilter noiseFilt[16];
+	dsp::RCFilter audioFilt;
 
 	void process(const ProcessArgs& args) override {
 		float audio = inputs[MAIN_INPUT].getVoltageSum()/std::max(inputs[MAIN_INPUT].getChannels(),1);
+		audioFilt.setCutoffFreq(150/args.sampleRate);
+		audioFilt.process(audio);
+		float lp = audioFilt.lowpass();
+		audio -= lp*params[BASS_SWITCH].getValue();
+		
 		float dec = 1/dsp::exp2_taylor5(params[BITE_PARAM].getValue());
 		float noise = rand()%1000-500;
 		//Poly from hiss
@@ -66,11 +80,24 @@ struct Grit : Module {
 		outputs[AUX_OUTPUT].setChannels(channels);
 		//Main algo
 		for(int i = 0;i<channels;i++){
-			noise = inputs[HISS_INPUT].getNormalVoltage(noise/100.f)/5.f;
+			noise = inputs[HISS_INPUT].getNormalVoltage(noise/100.f,i)/5.f;
 			noise = noise*params[HISS_PARAM].getValue();
-			env[i] = std::max(abs(audio)-noise,exp2Decay(env[i],dec,args.sampleRate));
-			outputs[ENV_OUTPUT].setVoltage(env[i],i);
-			float scaledAudio = audio/env[i];
+			float scaledAudio;
+
+			if(params[HISS_SWITCH].getValue()>0){
+				env[i] = std::max(abs(audio),exp2Decay(env[i],dec,args.sampleRate));
+
+				noiseFilt[i].setCutoffFreq(2/dec/args.sampleRate);
+				noiseFilt[i].process(noise);
+				noise = noiseFilt[i].lowpass()/6;
+
+				outputs[ENV_OUTPUT].setVoltage(env[i],i);
+				scaledAudio = (audio)/(env[i])+noise;
+			}else{
+				env[i] = std::max(abs(audio)-noise,exp2Decay(env[i],dec,args.sampleRate));
+				outputs[ENV_OUTPUT].setVoltage(env[i],i);
+				scaledAudio = audio/env[i];
+			}
 			if(std::isnan(scaledAudio)){
 				scaledAudio=0;
 			}
@@ -79,7 +106,7 @@ struct Grit : Module {
 			scaledAudio = softClip(scaledAudio,1,params[KNEE_PARAM].getValue());
 			scaledAudio /= softClip(drive,1,params[KNEE_PARAM].getValue());
 			scaledAudio *= env[i];
-			outputs[MAIN_OUTPUT].setVoltage(scaledAudio,i);
+			outputs[MAIN_OUTPUT].setVoltage(scaledAudio+lp*params[BASS_SWITCH].getValue(),i);
 			outputs[AUX_OUTPUT].setVoltage(scaledAudio-audio,i);
 		}
 	}
@@ -96,13 +123,16 @@ struct GritWidget : ModuleWidget {
 			getPalette(PAL_TANGERINE)
 		));
 
-		addParam(createParamCentered<QKnob10mm>(mm2px(Vec(22.860, 70.0)), module, Grit::HISS_PARAM));
-		addParam(createParamCentered<QKnob10mm>(mm2px(Vec(11.43 , 56.5)), module, Grit::BITE_PARAM));
-		addParam(createParamCentered<QKnob18mm>(mm2px(Vec(29.211, 41.0)), module, Grit::DRIVE_PARAM));
-		addParam(createParamCentered<QKnob10mm>(mm2px(Vec(34.290, 83.50)), module, Grit::KNEE_PARAM));
+		addParam(createParamCentered<QKnob10mm>(mm2px(Vec(11.43, 59)), module, Grit::HISS_PARAM));
+		addParam(createParamCentered<QKnob18mm>(mm2px(Vec(34.29 , 37)), module, Grit::BITE_PARAM));
+		addParam(createParamCentered<QKnob18mm>(mm2px(Vec(11.43, 37)), module, Grit::DRIVE_PARAM));
+		addParam(createParamCentered<QKnob10mm>(mm2px(Vec(34.290, 59)), module, Grit::KNEE_PARAM));
+
+		addParam(createParamCentered<CKSS>(mm2px(Vec(17.78, 100.5)), module, Grit::HISS_SWITCH));
+		addParam(createParamCentered<CKSS>(mm2px(Vec(38.1, 100.5)), module, Grit::BASS_SWITCH));
 
 		addInput(createInputCentered<QPort>(mm2px(Vec(7.618, 114.0)),module,Grit::MAIN_INPUT));
-		addInput(createInputCentered<QPort>(mm2px(Vec(7.618, 79.0)),module,Grit::HISS_INPUT));
+		addInput(createInputCentered<QPort>(mm2px(Vec(7.618, 100.5)),module,Grit::HISS_INPUT));
 		addOutput(createOutputCentered<QPort>(mm2px(Vec(17.78, 114.0)),module,Grit::MAIN_OUTPUT));
 		addOutput(createOutputCentered<QPort>(mm2px(Vec(27.94, 114.0)),module,Grit::AUX_OUTPUT));
 		addOutput(createOutputCentered<QPort>(mm2px(Vec(38.1, 114.0)),module,Grit::ENV_OUTPUT));

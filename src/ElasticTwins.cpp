@@ -105,23 +105,19 @@ struct ElasticTwins : Module {
 	}
 
 	//BUFFER VARS
-	staque<float> buf1;
-	float out1=0;
-	float slope1=0;
-	staque<float> buf2;
-	float out2=0;
-	float slope2=0;
+	staque<float> buf1[16];
+	staque<float> buf2[16];
 
 	//TRIG AND PARAMS
-	float lastClear;
+	float lastClear[16];
 	float lastSwap;
 
 	//TIMERS
 	float clock1progress;
 	float clock2progress;
-	float transitionProgress;
-	bool queuedParams[4] = {false};
-	bool currentParams[4] = {false};
+	float transitionProgress[16];
+	bool queuedParams[4][16] = {};
+	bool currentParams[4][16] = {};
 
 	void process(const ProcessArgs& args) override {
 
@@ -130,6 +126,8 @@ struct ElasticTwins : Module {
 		In this section, grab all param inputs and queue any param changes
 	
 	*/
+	int voices = inputs[AUDIO_INPUT].getChannels();
+	outputs[BUF1_OUTPUT].setChannels(voices);
 
 		//UPDATE CLOCKS
 		float clock1Rate = dsp::exp2_taylor5(params[CLK1_PARAM].getValue())*args.sampleTime;
@@ -145,6 +143,8 @@ struct ElasticTwins : Module {
 		clock2progress-=floor(clock2progress);
 		bool clock1Gate = clock1progress<=0.5f;
 		bool clock2Gate = clock2progress<=0.5f;
+
+	for(int i = 0; i < voices; i++){
 
 		//SEND VALUES FROM CLOCK
 		float clrGate;
@@ -204,25 +204,25 @@ struct ElasticTwins : Module {
 		}
 
 		//BUFFER MODE SWITCH
-		buf1.mode = params[MODE1_SWITCH].getValue();
-		buf2.mode = params[MODE2_SWITCH].getValue();
+		buf1[i].mode = params[MODE1_SWITCH].getValue();
+		buf2[i].mode = params[MODE2_SWITCH].getValue();
 
 		//FEEDBACK
 		float fb = params[FEEDBACK_PARAM].getValue();
 
 		//GATES
-		queuedParams[REC_TPARAM] = !(inputs[REC_INPUT].getNormalVoltage(recGate)>0.1) != !(params[REC_BUTTON].getValue()>0.1);
-		queuedParams[REV_TPARAM] = !(inputs[REV_INPUT].getNormalVoltage(revGate)>0.1) != !(params[REV_BUTTON].getValue()>0.1);
+		queuedParams[REC_TPARAM][i] = !(inputs[REC_INPUT].getNormalVoltage(recGate,i)>0.1) != !(params[REC_BUTTON].getValue()>0.1);
+		queuedParams[REV_TPARAM][i] = !(inputs[REV_INPUT].getNormalVoltage(revGate,i)>0.1) != !(params[REV_BUTTON].getValue()>0.1);
 
 		//TRIGS
-		if(inputs[CLR_INPUT].getNormalVoltage(clrGate)+params[CLR_BUTTON].getValue()>lastClear){
-			queuedParams[CLR_TPARAM] = true;
+		if(inputs[CLR_INPUT].getNormalVoltage(clrGate,i)+params[CLR_BUTTON].getValue()>lastClear[i]){
+			queuedParams[CLR_TPARAM][i] = true;
 		}
-		lastClear = inputs[CLR_INPUT].getNormalVoltage(clrGate)+params[CLR_BUTTON].getValue();
-		if(inputs[SWAP_INPUT].getNormalVoltage(swapGate)+params[SWAP_BUTTON].getValue()>lastSwap){
-			queuedParams[SWAP_TPARAM] = true;
+		lastClear[i] = inputs[CLR_INPUT].getNormalVoltage(clrGate,i)+params[CLR_BUTTON].getValue();
+		if(inputs[SWAP_INPUT].getNormalVoltage(swapGate,i)+params[SWAP_BUTTON].getValue()>lastSwap){
+			queuedParams[SWAP_TPARAM][i] = true;
 		}
-		lastSwap = inputs[SWAP_INPUT].getNormalVoltage(swapGate)+params[SWAP_BUTTON].getValue();
+		lastSwap = inputs[SWAP_INPUT].getNormalVoltage(swapGate,i)+params[SWAP_BUTTON].getValue();
 
 	/*
 	
@@ -231,27 +231,27 @@ struct ElasticTwins : Module {
 	*/
 
 		bool transition = false;
-		transition = transition || (queuedParams[REC_TPARAM] != currentParams[REC_TPARAM]);
-		transition = transition || (queuedParams[REV_TPARAM] != currentParams[REV_TPARAM]);
-		transition = transition || queuedParams[CLR_TPARAM];
-		transition = transition || queuedParams[SWAP_TPARAM];
+		transition = transition || (queuedParams[REC_TPARAM][i] != currentParams[REC_TPARAM][i]);
+		transition = transition || (queuedParams[REV_TPARAM][i] != currentParams[REV_TPARAM][i]);
+		transition = transition || queuedParams[CLR_TPARAM][i];
+		transition = transition || queuedParams[SWAP_TPARAM][i];
 
 		if(transition){
-			transitionProgress+=args.sampleTime/params[TRANS_PARAM].getValue()*1000;
+			transitionProgress[i]+=args.sampleTime/params[TRANS_PARAM].getValue()*1000;
 		}else{
-			transitionProgress-=args.sampleTime/params[TRANS_PARAM].getValue()*1000;
+			transitionProgress[i]-=args.sampleTime/params[TRANS_PARAM].getValue()*1000;
 		}
 
-		if(transitionProgress >= 1){
-			transitionProgress = 1;
-			currentParams[0] = queuedParams[0];
-			currentParams[1] = queuedParams[1];
-			currentParams[2] = queuedParams[2];
-			currentParams[3] = queuedParams[3];
+		if(transitionProgress[i] >= 1){
+			transitionProgress[i] = 1;
+			currentParams[0][i] = queuedParams[0][i];
+			currentParams[1][i] = queuedParams[1][i];
+			currentParams[2][i] = queuedParams[2][i];
+			currentParams[3][i] = queuedParams[3][i];
 		}
 
-		if(transitionProgress <= 0){
-			transitionProgress = 0;
+		if(transitionProgress[i] <= 0){
+			transitionProgress[i] = 0;
 		}
 
 	/*
@@ -260,73 +260,73 @@ struct ElasticTwins : Module {
 	
 	*/
 
-		lights[REC_LIGHT].setBrightness(static_cast<float>(currentParams[REC_TPARAM]));
-		lights[REV_LIGHT].setBrightness(static_cast<float>(currentParams[REV_TPARAM]));
+		lights[REC_LIGHT].setBrightness(static_cast<float>(currentParams[REC_TPARAM][1]));
+		lights[REV_LIGHT].setBrightness(static_cast<float>(currentParams[REV_TPARAM][1]));
 
 		if(!inputs[AUDIO_INPUT].isConnected()){//Do nothing if disconnected
 			return;
 		}
 
-		float audio = inputs[AUDIO_INPUT].getVoltageSum()/inputs[AUDIO_INPUT].getChannels();
+		float audio = inputs[AUDIO_INPUT].getVoltage(i);
 
-		if(currentParams[CLR_TPARAM]){//Clear on trig
-			buf1.clear();
-			buf2.clear();
+		if(currentParams[CLR_TPARAM][i]){//Clear on trig
+			buf1[i].clear();
+			buf2[i].clear();
 			lights[CLR_LIGHT].setBrightness(1.f);
-			currentParams[CLR_TPARAM] = false;
-			queuedParams[CLR_TPARAM] = false;
+			currentParams[CLR_TPARAM][i] = false;
+			queuedParams[CLR_TPARAM][i] = false;
 		}
 		lights[CLR_LIGHT].setBrightness(lights[CLR_LIGHT].getBrightness()/1.0005f);
 
-		if(currentParams[SWAP_TPARAM]){//Swap on trig
-			buf1.swap(&buf2);
+		if(currentParams[SWAP_TPARAM][i]){//Swap on trig
+			buf1[i].swap(&buf2[i]);
 			lights[SWAP_LIGHT].setBrightness(1.f);
-			currentParams[SWAP_TPARAM] = false;
-			queuedParams[SWAP_TPARAM] = false;
+			currentParams[SWAP_TPARAM][i] = false;
+			queuedParams[SWAP_TPARAM][i] = false;
 		}
 		lights[SWAP_LIGHT].setBrightness(lights[SWAP_LIGHT].getBrightness()/1.0005f);
 
 		//DO THE PROCESS
 
-		if(!currentParams[REC_TPARAM]&&!currentParams[REV_TPARAM]&&!buf2.empty()){//POP FROM 2
-			buf1.push((buf2.top()*fb)*(1-transitionProgress));
-			buf2.pop();
+		if(!currentParams[REC_TPARAM][i]&&!currentParams[REV_TPARAM][i]&&!buf2[i].empty()){//POP FROM 2
+			buf1[i].push((buf2[i].top()*fb)*(1-transitionProgress[i]));
+			buf2[i].pop();
 		}
 
-		if(currentParams[REC_TPARAM]&&!currentParams[REV_TPARAM]&&!buf2.empty()){//POP FROM 2
-			buf1.push((buf2.top()*fb+audio)*(1-transitionProgress));
-			buf2.pop();
+		if(currentParams[REC_TPARAM][i]&&!currentParams[REV_TPARAM][i]&&!buf2[i].empty()){//POP FROM 2
+			buf1[i].push((buf2[i].top()*fb+audio)*(1-transitionProgress[i]));
+			buf2[i].pop();
 		}
 
-		if(!currentParams[REC_TPARAM]&&currentParams[REV_TPARAM]&&!buf1.empty()){//POP FROM 1
-			buf2.push((buf1.top()*fb)*(1-transitionProgress));
-			buf1.pop();
+		if(!currentParams[REC_TPARAM][i]&&currentParams[REV_TPARAM][i]&&!buf1[i].empty()){//POP FROM 1
+			buf2[i].push((buf1[i].top()*fb)*(1-transitionProgress[i]));
+			buf1[i].pop();
 		}
 
-		if(currentParams[REC_TPARAM]&&currentParams[REV_TPARAM]&&!buf1.empty()){//POP FROM 1
-			buf2.push((buf1.top()*fb+audio)*(1-transitionProgress));
-			buf1.pop();
+		if(currentParams[REC_TPARAM][i]&&currentParams[REV_TPARAM][i]&&!buf1[i].empty()){//POP FROM 1
+			buf2[i].push((buf1[i].top()*fb+audio)*(1-transitionProgress[i]));
+			buf1[i].pop();
 		}
 
-		if(currentParams[REC_TPARAM]&&!currentParams[REV_TPARAM]&&buf2.empty()){
-			buf1.push(audio*(1-transitionProgress));
+		if(currentParams[REC_TPARAM][i]&&!currentParams[REV_TPARAM][i]&&buf2[i].empty()){
+			buf1[i].push(audio*(1-transitionProgress[i]));
 		}
 
-		if(currentParams[REC_TPARAM]&&currentParams[REV_TPARAM]&&buf1.empty()){
-			buf2.push(audio*(1-transitionProgress));
+		if(currentParams[REC_TPARAM][i]&&currentParams[REV_TPARAM][i]&&buf1[i].empty()){
+			buf2[i].push(audio*(1-transitionProgress[i]));
 		}
 
 		//Outputs each output shaped by transition window
 		float cv = 0;
-		if(!buf1.empty()&&currentParams[REV_TPARAM]){
-			cv += buf1.top();
+		if(!buf1[i].empty()&&currentParams[REV_TPARAM][i]){
+			cv += buf1[i].top();
 		}
-		if(!buf2.empty()&&!currentParams[REV_TPARAM]){
-			cv +=buf2.top();
+		if(!buf2[i].empty()&&!currentParams[REV_TPARAM][i]){
+			cv +=buf2[i].top();
 		}
 
-		out1 = cv;
-		outputs[BUF1_OUTPUT].setVoltage(out1*(1-transitionProgress));
+		outputs[BUF1_OUTPUT].setVoltage(cv*(1-transitionProgress[i]),i);
+	}
 
 	}
 };

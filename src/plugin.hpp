@@ -25,7 +25,9 @@ extern Model* modelNotable;
 extern Model* modelOrganism;
 extern Model* modelSimmer;
 extern Model* modelDialecticFilter;
-extern Model* modelIvory;
+extern Model* modelWeather;
+extern Model* modelBoxes;
+extern Model* modelOTamer;
 
 //Custom Panels
 struct QTintPanel : SvgPanel {
@@ -63,7 +65,7 @@ struct QTintPanel : SvgPanel {
 		}
 
 		//DRAW
-		SvgPanel::draw(args);
+		Widget::draw(args);
 
 		//LOAD ORIGINAL COLORS
 		for(i=0;i<numShapes;i++){
