@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="8mm"
+   height="8mm"
+   viewBox="0 0 8 8"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.3 (0d15f75042, 2025-12-25)"
+   sodipodi:docname="WaveBTN3.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#999999"
+     borderopacity="1"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="13.91936"
+     inkscape:cx="13.793737"
+     inkscape:cy="3.4843555"
+     inkscape:window-width="1707"
+     inkscape:window-height="957"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1"
+     showgrid="true">
+    <inkscape:grid
+       id="grid1"
+       units="mm"
+       originx="0"
+       originy="0"
+       spacingx="0.49999999"
+       spacingy="0.49999999"
+       empcolor="#0099e5"
+       empopacity="0.30196078"
+       color="#0099e5"
+       opacity="0.14901961"
+       empspacing="5"
+       enabled="true"
+       visible="true" />
+  </sodipodi:namedview>
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       d="M 3.9997559,0 A 4,4 0 0 0 0,3.9997559 4,4 0 0 0 3.9997559,8.0000285 4,4 0 0 0 8.0000285,3.9997559 4,4 0 0 0 3.9997559,0 Z m 0,0.50022786 A 3.5,3.5 0 0 1 7.4998006,3.9997559 3.5,3.5 0 0 1 3.9997559,7.4998006 3.5,3.5 0 0 1 0.50022786,3.9997559 3.5,3.5 0 0 1 3.9997559,0.50022786 Z"
+       style="fill:#191413;stroke-width:0.499999;stroke-linecap:square;paint-order:stroke markers fill"
+       id="path3" />
+    <path
+       d="M 3.9997559,0.99993896 C 2.3430446,1.00004 1.00004,2.3430446 0.99993896,3.9997559 0.99975471,5.6566689 2.3428429,6.9999884 3.9997559,7.0000895 5.6568707,7.0002738 7.0002738,5.6568707 7.0000895,3.9997559 6.9999884,2.3428429 5.6566689,0.99975471 3.9997559,0.99993896 Z m 0,2.50010584 A 0.5,0.5 0 0 1 4.4999837,3.9997559 0.5,0.5 0 0 1 3.9997559,4.4999837 0.5,0.5 0 0 1 3.5000448,3.9997559 0.5,0.5 0 0 1 3.9997559,3.5000448 Z"
+       style="fill:#191413;stroke-width:0.499999;stroke-linecap:square;paint-order:stroke markers fill"
+       id="path2" />
+  </g>
+</svg>

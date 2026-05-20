@@ -138,6 +138,14 @@
       ]
     },
     {
+      "slug": "OTamer",
+      "name": "O-Tamer",
+      "description": "A filter/spectral shaping expander for Organism.",
+      "tags": [
+        "Oscillator", "Filter","expander","Polyphonic"
+      ]
+    },
+    {
       "slug": "Simmer",
       "name": "Simmer",
       "description": "Trig-Based melody machine",
@@ -156,13 +164,20 @@
       ]
     },
     {
-      "slug": "Ivory",
-      "name": "Ivory",
-      "description": "Ray-casted delay",
+      "slug": "Weather",
+      "name": "WTHR",
+      "description": "Random oscillator",
+      "tags": [
+        "Oscillator","Noise"
+      ]
+    },
+    {
+      "slug": "Boxes",
+      "name": "Boxes",
+      "description": "Delay based on distance from 4 walls",
       "tags": [
         "Delay","Reverb"
-      ],
-      "hidden":true
+      ]
     }
   ]
 }

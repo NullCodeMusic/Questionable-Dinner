@@ -14,5 +14,6 @@ enum paletteID {
     PAL_BUBBLEGUM,
     PAL_PEACHBERRY,
     PAL_SNOT,
-    PAL_ELECTRIC
+    PAL_ELECTRIC,
+    PAL_SKY
 };

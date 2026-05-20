@@ -1,5 +1,6 @@
 //Module Slug Simmer - find and replace this to make a new one
 
+#include "palettes.hpp"
 #include "plugin.hpp"
 #include "mymath.hpp"
 
@@ -180,7 +181,7 @@ struct SimmerWidget : ModuleWidget {
 		setModule(module);
 		setPanel(createTintPanel(
 			"res/panels/Simmer.svg",
-			getPalette(PAL_BUBBLEGUM)
+			getPalette(PAL_ELECTRIC)
 		));
         //Add widgets here: 
 		constexpr double column[5] = {7.62,19.05,30.48,48.26,53.34};
