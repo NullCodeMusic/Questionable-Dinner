@@ -11,7 +11,7 @@ A free plugin for VCV Rack focusing on playful design.
 - **Moxie**: Added model selection to right click context menu.
 - **The Funnel**: Fixed a crash.
 - Added **Organism**, an additive oscillator.
-- Added **Domesticate**, a modifier for organism to tame its inharmonic elements.
+- Added **O-Tamer**, a modifier for organism to tame its inharmonic elements.
 - Added **Simmer**, which turns trigs into pitch steps.
 - Added **Dead Meat**, another distortion module.
 - Added **WTHR**, a noise/texture oscillator
