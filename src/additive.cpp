@@ -187,6 +187,8 @@ void Particles::reset(){
 }
 //Prism <Prsm> (detuner in presets) 
 void Prism::process(float freq,float n,float deltaTime,float prev,float structure,float morph){
+    structure = clamp(structure,-1.f,1.f);
+    morph = clamp(morph,-1.f,1.f)
     //Original Surgeon Patch
     n/=4;
     float_4 i = {1,2,3,4};
