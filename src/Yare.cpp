@@ -39,19 +39,6 @@ struct Yare : Module {
 		configBypass(AUDIO_INPUT,AUDIO_OUTPUT);
 	}
 
-	json_t* dataToJson() override {
-		json_t* rootJ = json_object();
-		json_object_set_new(rootJ, "theme", json_integer(theme));
-		return rootJ;
-	}
-
-	void dataFromJson(json_t* rootJ) override {
-		json_t* modeJ = json_object_get(rootJ, "theme");
-		if (modeJ){
-			theme = json_integer_value(modeJ);
-		}
-	}
-
 	float env;
 	float runningMax=0.f;
 	float timer;

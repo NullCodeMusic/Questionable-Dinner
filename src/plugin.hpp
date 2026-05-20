@@ -3,6 +3,8 @@
 #include "palettes.hpp"
 #include <array>
 #include <map>
+#include <utility>
+#include <vector>
 
 using namespace rack;
 
@@ -37,41 +39,33 @@ struct QTintPanel : SvgPanel {
 	void draw(const DrawArgs& args) override {
 
 		rack::window::Svg* tintLayer = panel.get();
-		
-		//PUT SHAPE POINTERS INTO MORE ITERABLE FORMAT
-		NSVGshape* shape = tintLayer->handle->shapes;
-		const int numShapes = tintLayer->getNumShapes();
-		int i = 0;
-		NSVGshape* shapes[numShapes];
-		while(shape){
-			shapes[i] = shape;
-			shape = shape->next;
-			i++;
-		}
-		
-		//SAVE ORIGINAL COLORS
-		unsigned int originalColors[numShapes];
-		for(i=0;i<numShapes;i++){
-			originalColors[i]=shapes[i]->fill.color;
+		if (!tintLayer || !tintLayer->handle) {
+			SvgPanel::draw(args);
+			return;
 		}
 
-		//MANIPULATE COLORS
-		for(NSVGshape* s : shapes){
+		// Walk the shape list once: tint matching shapes and remember the original
+		// color so we can restore it after drawing. A single traversal avoids
+		// having to size a VLA from getNumShapes() and then re-walk the list —
+		// any disagreement between the two (e.g. an SDK whose NSVGshape layout
+		// differs from the plugin's, making shape->next read the wrong offset)
+		// previously left the array partly uninitialised and segfaulted on
+		// the next read.
+		std::vector<std::pair<NSVGshape*, unsigned int>> modified;
+		for (NSVGshape* s = tintLayer->handle->shapes; s; s = s->next) {
 			int key = getChromaKey(s->fill.color);
-			if(key >= 0){
+			if (key >= 0 && key < (int)colors.size()) {
+				modified.emplace_back(s, s->fill.color);
 				s->fill.color = colors[key];
 				s->fill.type = NSVG_PAINT_COLOR;
 			}
 		}
 
-		//DRAW
-		Widget::draw(args);
+		SvgPanel::draw(args);
 
-		//LOAD ORIGINAL COLORS
-		for(i=0;i<numShapes;i++){
-			shapes[i]->fill.color=originalColors[i];
+		for (auto& m : modified) {
+			m.first->fill.color = m.second;
 		}
-
 	}
 	void setColors(std::array<unsigned int, 4> newColors){
 		colors = newColors;

@@ -1,10 +1,8 @@
 #pragma once
 
-#include "rack.hpp"
 #include <cmath>
 #include <deque>
 
-using namespace rack;
 //Sine approx stolen from VCV fundamentals, thanks Andrew!
 template <typename T>
 inline T sin_2pi_9(T x) {
@@ -16,8 +14,8 @@ inline T sin_2pi_9(T x) {
 }
 
 template <typename T> inline int sign(T val) {
-    return (T(0) < val) - (val < T(0));
-}
+    	return (T(0) < val) - (val < T(0));
+	}
 
 inline float magnitude(float x, float y){
 		float out = sqrt(x*x+y*y);
@@ -134,96 +132,5 @@ struct staque
 
 	void swap(staque *s){
 		data.swap(s->data);
-	}
-};
-
-template <typename T>
-inline T cerp(T a, T b, float x){
-	float cosx = (1-sin_2pi_9(x/2+0.25))/2;
-	return(a*(1-cosx)+b*cosx);
-}
-
-template <typename T>
-inline T cubic(T a,T b,T c,T d,float x){//INTERPOLATES B TO C
-	double a0,a1,a2,a3,x2;
-
-	x2 = x*x;
-	a0 = d - c - a + b;
-	a1 = a - b - a0;
-	a2 = c - a;
-	a3 = b;
-
-	return a0*x*x2+a1*x2+a2*x+a3;
-}
-
-template <typename T>
-inline T lerp(T a, T b, float x){
-	return(a*(1-x)+b*x);
-}
-
-template <typename T>
-inline T lerp(T a, T b, T x){
-	return(a*(1-x)+b*x);
-}
-
-template <size_t SIZE, size_t RESOLUTION>
-struct PRNGCache {
-	std::minstd_rand rng;
-	int lastSeed = 0;
-	float output[SIZE]={};
-	PRNGCache(int seed=0){
-		lastSeed = seed;
-		rng.seed(seed);
-		for (int i = 0; i<SIZE; i++) {
-			output[i]=(rng()%RESOLUTION)/float(RESOLUTION);
-		}
-	}
-	void reseedHard(int seed){
-		lastSeed = seed;
-		rng.seed(seed);
-		for (int i = 0; i<SIZE; i++) {
-			output[i]=(rng()%RESOLUTION)/float(RESOLUTION);
-		}
-	}
-	void reseedSoft(int seed){
-		if(lastSeed == seed){
-			return;
-		}
-		lastSeed = seed;
-		rng.seed(seed);
-		for (int i = 0; i<SIZE; i++) {
-			output[i]=(rng()%RESOLUTION)/float(RESOLUTION);
-		}
-	}
-};
-
-template <size_t SIZE, size_t RESOLUTION>
-struct PRNGCache4 {
-	std::minstd_rand rng;
-	int lastSeed = 0;
-	simd::float_4 output[SIZE]={};
-	PRNGCache4(int seed=0){
-		lastSeed = seed;
-		rng.seed(seed);
-		for (int i = 0; i<SIZE; i++) {
-			output[i]=simd::float_4((rng()%RESOLUTION)/float(RESOLUTION),(rng()%RESOLUTION)/float(RESOLUTION),(rng()%RESOLUTION)/float(RESOLUTION),(rng()%RESOLUTION)/float(RESOLUTION));
-		}
-	}
-	void reseedHard(int seed){
-		lastSeed = seed;
-		rng.seed(seed);
-		for (int i = 0; i<SIZE; i++) {
-			output[i]=simd::float_4((rng()%RESOLUTION)/float(RESOLUTION),(rng()%RESOLUTION)/float(RESOLUTION),(rng()%RESOLUTION)/float(RESOLUTION),(rng()%RESOLUTION)/float(RESOLUTION));
-		}
-	}
-	void reseedSoft(int seed){
-		if(lastSeed == seed){
-			return;
-		}
-		lastSeed = seed;
-		rng.seed(seed);
-		for (int i = 0; i<SIZE; i++) {
-			output[i]=simd::float_4((rng()%RESOLUTION)/float(RESOLUTION),(rng()%RESOLUTION)/float(RESOLUTION),(rng()%RESOLUTION)/float(RESOLUTION),(rng()%RESOLUTION)/float(RESOLUTION));
-		}
 	}
 };

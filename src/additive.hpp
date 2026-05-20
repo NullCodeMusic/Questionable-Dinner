@@ -1,6 +1,5 @@
 #pragma once
 #include <rack.hpp>
-#include "mymath.hpp"
 
 static constexpr int MAX_PARTIALS = 32;//Divided by 4
 
@@ -119,7 +118,6 @@ struct Prism : Algorithm
 //Chaotic <Dice> (shimmer in presets)
 struct Chaotic : Algorithm
 {
-    PRNGCache4<32, 1000> prng;
     Chaotic(){
         text = "Dice";
     }
@@ -129,7 +127,6 @@ struct Chaotic : Algorithm
 //Noise <&#$%> (wind or robot in presets)
 struct Noise : Algorithm
 {
-    PRNGCache4<32, 1000> prng;
     unsigned long time = 0;
     Noise(){
         text = "&#$%";
@@ -159,28 +156,4 @@ struct PerPartialAM : Algorithm
     void process(float freq,float n,float deltaTime,float prev,float structure,float morph) override;
     void reset() override;
 };
-
-//BLEND FUNCTION
-enum FTypes {
-    FTYPE_HIGHPASS,
-    FTYPE_LOWPASS,
-    FTYPE_NOTCH,
-    FTYPE_BANDPASS
-};
-
-struct BlendFilter {
-    rack::simd::float_4 partials[MAX_PARTIALS];
-
-    float center = 1; 
-    float width = 0;
-    float bias = 0; 
-    float amount = 0;
-    int type = FTYPE_LOWPASS;
-    bool preserveFund;
-    int dither = 0;
-    float pSum = 0;
-
-    void process();
-};
-
 }

@@ -39,7 +39,7 @@ struct DialecticFilter : Module {
 	
 	DialecticFilter() {
 		config(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
-		configParam(CUTOFF_PARAM,2,14.3,9.15,"Cutoff","Hz",2);
+		configParam(CUTOFF_PARAM,2,14.3,9.15,"Cutoff");
 		configParam(HARSH_PARAM,0,5,2.5,"Bite");
 		configParam(BIAS_PARAM,-5,5,0,"Bias"," volts");
 		configParam(RESO_PARAM,0,0.99,0,"Resonance","%",0,100,0);
@@ -55,8 +55,7 @@ struct DialecticFilter : Module {
 		configInput(HARSH_INPUT,"Bite CV");
 		configInput(BIAS_INPUT,"Bias CV");
 		configInput(RESO_INPUT,"Resonance CV");
-		configOutput(AUDIO_OUTPUT,"Audio");
-		configOutput(LOGIC_OUTPUT,"Flips");
+		
 	}
 
     json_t* dataToJson() override {
@@ -72,61 +71,55 @@ struct DialecticFilter : Module {
 		}
 	}
 
-	CytomicAllpass ap[16];
-	dsp::RCFilter lp[16];
-	dsp::RCFilter hp[16];
-	float lerp[16];
+	CytomicAllpass ap;
+	dsp::RCFilter lp;
+	dsp::RCFilter hp;
+	float lerp;
 	bool mode;
-	float out[16];
-	float out2[16];
+	float out;
+	float out2;
 
     void process(const ProcessArgs& args) override {
-		int voices = inputs[AUDIO_INPUT].getChannels();
-		outputs[AUDIO_OUTPUT].setChannels(voices);
-		outputs[LOGIC_OUTPUT].setChannels(voices);
-		for(int i = 0; i < voices; i++){
-			float audio = inputs[AUDIO_INPUT].getVoltage(i);
-			float intmod = abs(audio);
-			float cutoff = dsp::exp2_taylor5(params[CUTOFF_PARAM].getValue()+params[CUTOFF_CV_PARAM].getValue()*inputs[CUTOFF_INPUT].getNormalVoltage(intmod,i));
-			cutoff = clamp(cutoff,0.f,args.sampleRate);
-			float harsh;
-			if(params[HARSH_SWITCH].getValue()){
-				harsh = dsp::exp2_taylor5(params[HARSH_PARAM].getValue()+params[HARSH_CV_PARAM].getValue()*inputs[HARSH_INPUT].getNormalVoltage(intmod,i))*cutoff;
-			}else{
-				harsh = dsp::exp2_taylor5(params[HARSH_PARAM].getValue()*1.5f-7.5f+params[HARSH_CV_PARAM].getValue()*inputs[HARSH_INPUT].getNormalVoltage(intmod,i))*40000.f;
-			}
-			float reso = clamp(params[RESO_PARAM].getValue()+params[RESO_CV_PARAM].getValue()*inputs[RESO_INPUT].getNormalVoltage(intmod,i)/10);
-			float sRatioLerp = clamp(args.sampleRate/44100.f-1);
-			float bias = params[BIAS_PARAM].getValue()+params[BIAS_CV_PARAM].getValue()*inputs[BIAS_INPUT].getNormalVoltage(intmod,i);
-			mode = params[MODE_SWITCH].getValue();
-
-			//Sample rate bullshit
-			float prev = out2[i]*sRatioLerp + out[i]*(1-sRatioLerp);
-
-			//Feedback
-			hp[i].process(prev);
-			audio += hp[i].highpass()*reso;
-			audio = clamp(audio,-1000.f,1000.f);
-
-			//Filter Cutoffs
-			ap[i].setCutoff(cutoff,args.sampleRate);
-			lp[i].setCutoffFreq(harsh*args.sampleTime);
-			hp[i].setCutoffFreq(cutoff*args.sampleTime);
-			ap[i].process(audio);
-			float phased = ap[i].get();
-
-			//Compare allpassed and input
-			lerp[i] = (abs(phased)>abs(audio+bias))*mode+(abs(phased)<=abs(audio+bias))*!mode;
-			lp[i].process(lerp[i]);
-			lerp[i] = lp[i].lowpass();
-
-			//Crossfade
-			out2[i] = out[i];
-			out[i] = lerp[i]*phased+(1.f-lerp[i])*audio;
-			//Output
-			outputs[AUDIO_OUTPUT].setVoltage(softClip(out[i],10,0.5),i);
-			outputs[LOGIC_OUTPUT].setVoltage(lerp[i]*10.f,i);
+		float audio = inputs[AUDIO_INPUT].getVoltage();
+		float intmod = abs(audio);
+		float cutoff = dsp::exp2_taylor5(params[CUTOFF_PARAM].getValue()+params[CUTOFF_CV_PARAM].getValue()*inputs[CUTOFF_INPUT].getNormalVoltage(intmod));
+		float harsh;
+		if(params[HARSH_SWITCH].getValue()){
+			harsh = dsp::exp2_taylor5(params[HARSH_PARAM].getValue()+params[HARSH_CV_PARAM].getValue()*inputs[HARSH_INPUT].getNormalVoltage(intmod))*cutoff;
+		}else{
+			harsh = dsp::exp2_taylor5(params[HARSH_PARAM].getValue()*1.5f-7.5f+params[HARSH_CV_PARAM].getValue()*inputs[HARSH_INPUT].getNormalVoltage(intmod))*40000.f;
 		}
+		float reso = clamp(params[RESO_PARAM].getValue()+params[RESO_CV_PARAM].getValue()*inputs[RESO_INPUT].getNormalVoltage(intmod)/10);
+		float sRatioLerp = clamp(args.sampleRate/44100.f-1);
+		float bias = params[BIAS_PARAM].getValue()+params[BIAS_CV_PARAM].getValue()*inputs[BIAS_INPUT].getNormalVoltage(intmod);
+		mode = params[MODE_SWITCH].getValue();
+
+		//Sample rate bullshit
+		float prev = out2*sRatioLerp + out*(1-sRatioLerp);
+
+		//Feedback
+		hp.process(prev);
+		audio += hp.highpass()*reso;
+		audio = clamp(audio,-1000.f,1000.f);
+
+		//Filter Cutoffs
+		ap.setCutoff(cutoff,args.sampleRate);
+		lp.setCutoffFreq(harsh*args.sampleTime);
+		hp.setCutoffFreq(cutoff*args.sampleTime);
+		ap.process(audio);
+		float phased = ap.get();
+
+		//Compare allpassed and input
+		lerp = (abs(phased)>abs(audio+bias))*mode+(abs(phased)<=abs(audio+bias))*!mode;
+		lp.process(lerp);
+		lerp = lp.lowpass();
+
+		//Crossfade
+		out2 = out;
+		out = lerp*phased+(1.f-lerp)*audio;
+		//Output
+		outputs[AUDIO_OUTPUT].setVoltage(softClip(out,10,0.5));
+		outputs[LOGIC_OUTPUT].setVoltage(lerp*10.f);
 	}
 };
 
@@ -138,7 +131,7 @@ struct DialecticFilterWidget : ModuleWidget {
 		setModule(module);
 		setPanel(createTintPanel(
 			"res/panels/DeadMeat.svg",//"res/panels/DialecticFilter.svg",
-			getPalette(PAL_TANGERINE)
+			getPalette(PAL_LIGHT)
 		));
         //Add widgets here: 
         //addParam(createParamCentered<QKnob8mm>(mm2px(Vec(0.0, 0.0)), module, DialecticFilter::XYZ_PARAM));

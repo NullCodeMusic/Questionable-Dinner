@@ -79,36 +79,6 @@ struct DelayLine
     }
 };
 
-template <size_t MAXDELAY>
-struct DelayLineDeque
-{
-    std::deque<float> buffer;
-	DelayLineDeque(){
-		buffer.resize(MAXDELAY);
-	}
-    void write(float val){
-        buffer.push_front(val);
-		if(!buffer.empty()&&buffer.size()>MAXDELAY){
-			buffer.pop_back();
-		}
-    }
-	void writeAt(int idx, float val){
-		buffer.at(idx) = val;
-	}
-    float readLerp(float pos){
-        int ipos = pos;
-        float fpos = pos - ipos;
-        return buffer.at(ipos+1)*fpos+buffer.at(ipos)*(1-fpos);
-    }
-    float readRaw(float pos){
-        int ipos = pos;
-        return buffer.at(ipos);
-    }
-    float readRaw(int ipos){
-        return buffer.at(ipos);
-    }
-};
-
 struct VoiceManager {
 	bool gates[16] = {false};
 	float pitches[16] = {0};
@@ -181,32 +151,3 @@ struct VoiceManager {
 		return gates[voice]*10.f;
 	}
 };
-
-template <int ORDER>
-struct Differentiator{
-	float vals[ORDER+1] = {};
-	float sampleRateMultiplier = 1.f;
-	void setSampleRate(float sr){
-		sampleRateMultiplier = sr/48000.f; 
-	}
-	void process(float newVal){
-		for(int i=0;i<ORDER;i++){
-			//Calculate slope
-			float slope = (newVal-vals[i])*sampleRateMultiplier;
-			vals[i] = newVal;
-			newVal = slope;
-		}
-		vals[ORDER] = newVal;
-	}
-	float max(){
-		return vals[ORDER];
-	}
-	float specific(int idx){
-		if(idx>ORDER){
-			return 0.f;
-		}
-
-		return vals[idx];
-	}
-};
-

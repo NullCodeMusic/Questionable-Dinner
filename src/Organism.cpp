@@ -3,7 +3,6 @@
 #include "plugin.hpp"
 #include "additive.hpp"
 #include "mymath.hpp"
-#include <vector>
 
 using namespace simd;
 
@@ -41,24 +40,6 @@ struct Organism : Module {
 	};
 	enum LightId {
 		LIGHTS_LEN
-	};
-	enum ExpParam {
-		FTYPE_SWITCH,
-		BASEWAVE_SWITCH,
-		FUND_BUTTON,
-		FWIDTH_PARAM,
-		FFREQ_PARAM,
-		FBIAS_PARAM,
-		FAMT_PARAM,
-		DITHER_PARAM,
-		ENV_PARAM
-	};
-	enum ExtInput {
-		FWIDTH_INPUT,
-		FFREQ_INPUT,
-		FBIAS_INPUT,
-		FAMT_INPUT,
-		DITHER_INPUT
 	};
 	
 	Organism() {
@@ -171,7 +152,6 @@ struct Organism : Module {
 		new additive::Particles,new additive::Prism,new additive::Chaotic,
 		new additive::Noise,new additive::PhaseMod,new additive::PerPartialAM}
 	};
-	additive::BlendFilter* blend = new additive::BlendFilter;
 	float env[16] = {0};
 	int envStage[16] = {0};
 	float_4 phases[16][32] = {0};
@@ -181,8 +161,6 @@ struct Organism : Module {
 	int algo = 0;
 	int number = 1;
 	int maxidx = 0;
-	std::vector<Param> eParams;
-	Module* tamer;
 
     void process(const ProcessArgs& args) override {
 
@@ -213,14 +191,6 @@ struct Organism : Module {
 		int idx;
 		outputs[AUDIO_OUTPUT].setChannels(channels);
 
-		//Expander once per voice
-		
-		if(getLeftExpander().module &&getLeftExpander().module->model==modelOTamer){
-			tamer = getLeftExpander().module;
-			eParams = tamer->params;
-			tamer->getOutput(0).setChannels(channels);
-		}
-
 		for(int v = 0;v<channels;v++){
 		
 
@@ -242,23 +212,6 @@ struct Organism : Module {
 		algo = (params[SPECIMEN_PARAM].getValue()+params[SPECIMEN_CV_PARAM].getValue()*inputs[SPECIMEN_CV_INPUT].getNormalVoltage(intlMod,v)/5.f*14);
 		algo = (algo+28) % 14;
 
-		//EXPANDER
-		int processType = 0;//0 - default, 1 - saw blend, 2 - square blend, 3 - filter blend
-		if(getLeftExpander().module && getLeftExpander().module->model==modelOTamer){
-
-			processType = 1+eParams[BASEWAVE_SWITCH].getValue();
-			blend->type = eParams[FTYPE_SWITCH].getValue();
-			blend->amount = clamp(eParams[FAMT_PARAM].getValue() + tamer->getInput(FAMT_INPUT).getVoltage(v)/10.f);
-			blend->bias = clamp(eParams[FBIAS_PARAM].getValue() + tamer->getInput(FBIAS_INPUT).getVoltage(v)/10.f);
-			blend->center = dsp::exp2_taylor5(eParams[FFREQ_PARAM].getValue()+ tamer->getInput(FFREQ_INPUT).getVoltage(v)/2.f);
-			blend->width = dsp::exp2_taylor5(eParams[FWIDTH_PARAM].getValue()+ tamer->getInput(FWIDTH_INPUT).getVoltage(v)/2.f);
-			blend->dither = eParams[DITHER_PARAM].getValue() + tamer->getInput(FAMT_INPUT).getVoltage(v)/2.f;
-			blend->preserveFund = eParams[FUND_BUTTON].getValue();
-
-			tamer->getOutput(0).setVoltage(eParams[ENV_PARAM].getValue()*intlMod,v);
-			blend->process();
-		}
-
 		//MAIN OSC
 		specimens[v][algo]->process(freq,number,args.sampleTime,lastAudio[v],structure,morph);
 		out = 0;
@@ -274,87 +227,25 @@ struct Organism : Module {
 		pFreq = 0;
 		freqMask = 1;
 		
-		float_4 b;
-		switch (processType) {
-		
-		case 0:
-			for(idx = 0; idx < maxidx; idx++){
-				phases[v][idx] -= floor(phases[v][idx]);
-				pFreq = i*freq*specimens[v][algo]->partials[PI_FREQ][idx];
-				freqMask = (pFreq<=nyquist)&(pFreq>=-nyquist);
-				out += sin_2pi_9(phases[v][idx]+specimens[v][algo]->partials[PI_PHASE][idx])*specimens[v][algo]->partials[PI_AMP][idx]*lpg&freqMask;
-				phases[v][idx] += args.sampleTime * pFreq;
-				i+=4;
-				lpg*=lpg4;
-			}
+		for(idx = 0; idx < maxidx; idx++){
 			phases[v][idx] -= floor(phases[v][idx]);
 			pFreq = i*freq*specimens[v][algo]->partials[PI_FREQ][idx];
 			freqMask = (pFreq<=nyquist)&(pFreq>=-nyquist);
-			out += sin_2pi_9(phases[v][idx]+specimens[v][algo]->partials[PI_PHASE][idx])*specimens[v][algo]->partials[PI_AMP][idx]*mask*lpg&freqMask;
-			phases[v][idx] += args.sampleTime*i*freq*specimens[v][algo]->partials[PI_FREQ][idx];
-			break;
-
-		case 1:
-			for(idx = 0; idx < maxidx; idx++){
-				b = blend->partials[idx];
-				phases[v][idx] -= floor(phases[v][idx]);
-				pFreq = i*freq*(specimens[v][algo]->partials[PI_FREQ][idx]*(1-b)+b);
-				freqMask = (pFreq<=nyquist)&(pFreq>=-nyquist);
-				out += sin_2pi_9(phases[v][idx]+specimens[v][algo]->partials[PI_PHASE][idx]*(1-b)+b)*(specimens[v][algo]->partials[PI_AMP][idx]*(1-b)+b/i)*lpg&freqMask;
-				phases[v][idx] += args.sampleTime * pFreq;
-				i+=4;
-				lpg*=lpg4;
-			}
-			b = blend->partials[idx];
-			phases[v][idx] -= floor(phases[v][idx]);
-			pFreq = i*freq*(specimens[v][algo]->partials[PI_FREQ][idx]*(1-b)+b);
-			freqMask = (pFreq<=nyquist)&(pFreq>=-nyquist);
-			out += sin_2pi_9(phases[v][idx]+specimens[v][algo]->partials[PI_PHASE][idx]*(1-b)+b)*(specimens[v][algo]->partials[PI_AMP][idx]*(1-b)+b/i)*mask*lpg&freqMask;
+			out += sin_2pi_9(phases[v][idx]+specimens[v][algo]->partials[PI_PHASE][idx])*specimens[v][algo]->partials[PI_AMP][idx]*lpg&freqMask;
 			phases[v][idx] += args.sampleTime * pFreq;
-			break;
-		
-		case 2:
-			for(idx = 0; idx < maxidx; idx++){
-				b = blend->partials[idx];
-				phases[v][idx] -= floor(phases[v][idx]);
-				pFreq = i*freq*(specimens[v][algo]->partials[PI_FREQ][idx]*(1-b))+b*(freq+(i-1)*freq*2);
-				freqMask = (pFreq<=nyquist)&(pFreq>=-nyquist);
-				out += sin_2pi_9(phases[v][idx]+specimens[v][algo]->partials[PI_PHASE][idx]*(1-b)+b)*(specimens[v][algo]->partials[PI_AMP][idx]*(1-b)+b/i)*lpg&freqMask;
-				phases[v][idx] += args.sampleTime * pFreq;
-				i+=4;
-				lpg*=lpg4;
-			}
-			b = blend->partials[idx];
-			phases[v][idx] -= floor(phases[v][idx]);
-			pFreq = i*freq*specimens[v][algo]->partials[PI_FREQ][idx]*(1-b)+b*(freq+(i-1)*freq*2);
-			freqMask = (pFreq<=nyquist)&(pFreq>=-nyquist);
-			out += sin_2pi_9(phases[v][idx]+specimens[v][algo]->partials[PI_PHASE][idx]*(1-b)+b)*(specimens[v][algo]->partials[PI_AMP][idx]*(1-b)+b/i)*mask*lpg&freqMask;
-			phases[v][idx] += args.sampleTime * pFreq;
-			break;
-
-		case 3:
-			for(idx = 0; idx < maxidx; idx++){
-				b = blend->partials[idx];
-				phases[v][idx] -= floor(phases[v][idx]);
-				pFreq = i*freq*(specimens[v][algo]->partials[PI_FREQ][idx]);
-				freqMask = (pFreq<=nyquist)&(pFreq>=-nyquist);
-				out += sin_2pi_9(phases[v][idx]+specimens[v][algo]->partials[PI_PHASE][idx]*(1-b)+b)*(specimens[v][algo]->partials[PI_AMP][idx]*(1-b))*lpg&freqMask;
-				phases[v][idx] += args.sampleTime * pFreq;
-				i+=4;
-				lpg*=lpg4;
-			}
-			b = blend->partials[idx];
-			phases[v][idx] -= floor(phases[v][idx]);
-			pFreq = i*freq*(specimens[v][algo]->partials[PI_FREQ][idx]);
-			freqMask = (pFreq<=nyquist)&(pFreq>=-nyquist);
-			out += sin_2pi_9(phases[v][idx]+specimens[v][algo]->partials[PI_PHASE][idx]*(1-b)+b)*(specimens[v][algo]->partials[PI_AMP][idx]*(1-b))*mask*lpg&freqMask;
-			phases[v][idx] += args.sampleTime * pFreq;
-			break;
+			i+=4;
+			lpg*=lpg4;
 		}
+		phases[v][idx] -= floor(phases[v][idx]);
+		pFreq = i*freq*specimens[v][algo]->partials[PI_FREQ][idx];
+		freqMask = (pFreq<=nyquist)&(pFreq>=-nyquist);
+		out += sin_2pi_9(phases[v][idx]+specimens[v][algo]->partials[PI_PHASE][idx])*specimens[v][algo]->partials[PI_AMP][idx]*mask*lpg&freqMask;
+		phases[v][idx] += args.sampleTime*i*freq*specimens[v][algo]->partials[PI_FREQ][idx];
+
 		float sum = (out[0]+out[1]+out[2]+out[3])*env[v];
 
 		//Reset Phases without clicking
-		if(queuedReset[v]&&abs(lastAudio[v])<0.000001){
+		if(queuedReset[v] && sum>0 && lastAudio[v]<=0){
 			for(int i = 0; i < 16; i++){
 				phases[v][i] = {0,0,0,0};
 			}

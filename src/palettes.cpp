@@ -12,8 +12,7 @@ static const std::vector<std::array<unsigned int, 4>> palettes = {
     {0xFF9357d9,  0xFF194b4b,  0xFF194b4b,  0xFF0080ef},//Bubblegum
     {0xFFc36b40,  0xFF8a8ee6,  0xFF8a8ee6,  0xFF7a3fab},//Peach-Berry
     {0xff772f57,  0xff7336a5,  0xff4dc8a1,  0xff7336a5/*0xff4cb9ca*/},//Snot
-    {0xff4fbcdb,  0xff289fbd,  0xff272023,  0xff582faf},//Electrical
-    {0xffbd9f00,  0xfff4cb60,  0xfff7f3fb,	0xff009bcb},//Sky
+    {0xff4fbcdb,  0xffeaeff4,  0xff272023,  0xff582faf}//Electrical
 };
 
 static const std::vector<std::string> names = {
@@ -23,8 +22,7 @@ static const std::vector<std::string> names = {
     "Bubblegum",
     "Peach-Berry",
     "Snot",
-    "Electric",
-    "Sky"
+    "Electric"
 };
 
 std::array<unsigned int, 4> getPalette(int id){

@@ -38,7 +38,6 @@ struct Moxie : Module {
 		json_t* rootJ = json_object();
 		json_object_set_new(rootJ, "clip", json_boolean(clip));
 		json_object_set_new(rootJ, "dc", json_boolean(dcRemove));
-		json_object_set_new(rootJ, "old", json_boolean(oldMode));
 		json_object_set_new(rootJ, "model", json_integer(form));
 		json_object_set_new(rootJ, "theme", json_integer(theme));
 		return rootJ;
@@ -53,10 +52,6 @@ struct Moxie : Module {
 		if (dcJ){
 			dcRemove=json_boolean_value(dcJ);
 		}
-		json_t* oldJ = json_object_get(rootJ, "old");
-		if (oldJ){
-			oldMode=json_boolean_value(dcJ);
-		}
 		json_t* formJ = json_object_get(rootJ, "model");
 		if (formJ){
 			form=json_integer_value(formJ);
@@ -69,7 +64,7 @@ struct Moxie : Module {
 
 	Moxie() {
 		config(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
-		configParam(BIAS_PARAM, -10.f, 10.f, 0.f, "Bias","v");
+		configParam(BIAS_PARAM, -10.f, 10.f, 0.f, "Bias","",0.0f,0.2f);
 		configParam(BITE_PARAM, 0.f, 14.f, 12.f, "Bite");
 		configParam(FADE_PARAM, -1.f,1.f,0.f,"Morph");
 		configParam(DRIVE_PARAM, -5.f, 5.f, 0.f, "Freq","",2.0f,261.63);
@@ -80,7 +75,7 @@ struct Moxie : Module {
 		configSwitch(MODE_SWITCH, 0.f,1.f,0.f, "Mode", {"Continuous","Slope"});
 		configSwitch(ALIVE_SWITCH, 0.f,1.f,0.f, "State", {"Alive","Dead"});
 
-		configInput(MAIN_INPUT, "Power");
+		configInput(MAIN_INPUT, "Voltage");
 		configInput(FM_INPUT, "FM");
 		configInput(VOCT_INPUT, "v/Oct");
 		configInput(SYNC_INPUT, "Sync/Reset");
@@ -103,7 +98,6 @@ struct Moxie : Module {
 	bool reset = true;
 	bool dcRemove=true;
 	bool flipflopEnabled= false;
-	bool oldMode = false;
 
 	int oversampling = 8;
 	int form = 0;
@@ -129,90 +123,44 @@ struct Moxie : Module {
 		}
 		formButton = params[FORM_BUTTON].getValue();
 
-		if(oldMode){
-
-			switch (form)
-			{
-			case 0:
-				lights[FORM_LIGHT].setBrightness(0.f);
-				lights[FORM_LIGHT+1].setBrightness(0.f);
-				lights[FORM_LIGHT+2].setBrightness(0.f);
-				moxie1(args,TUNING);
-				break;
-			
-			case 1:
-				lights[FORM_LIGHT].setBrightness(0.f);
-				lights[FORM_LIGHT+1].setBrightness(0.f);
-				lights[FORM_LIGHT+2].setBrightness(1.f);
-				moxieOld(args,0,TUNING);
-				break;
-			case 2:
-				lights[FORM_LIGHT].setBrightness(0.f);
-				lights[FORM_LIGHT+1].setBrightness(1.f);
-				lights[FORM_LIGHT+2].setBrightness(0.f);
-				moxieOld(args,1,TUNING);
-				break;
-			case 3:
-				lights[FORM_LIGHT].setBrightness(0.8f);
-				lights[FORM_LIGHT+1].setBrightness(0.8f);
-				lights[FORM_LIGHT+2].setBrightness(0.f);
-				moxieOld(args,2,TUNING);
-				break;
-
-			case 4:
-				lights[FORM_LIGHT].setBrightness(1.f);
-				lights[FORM_LIGHT+1].setBrightness(0.f);
-				lights[FORM_LIGHT+2].setBrightness(0.f);
-				moxieTrig(args,TUNING);
-				break;
-			
-			default:
-				moxie1(args,TUNING);
-				break;
-			}
-
-		}else {
+		switch (form)
+		{
+		case 0:
+			lights[FORM_LIGHT].setBrightness(0.f);
+			lights[FORM_LIGHT+1].setBrightness(0.f);
+			lights[FORM_LIGHT+2].setBrightness(0.f);
+			moxie1(args,TUNING);
+			break;
 		
-			switch (form)
-			{
-			case 0:
-				lights[FORM_LIGHT].setBrightness(0.f);
-				lights[FORM_LIGHT+1].setBrightness(0.f);
-				lights[FORM_LIGHT+2].setBrightness(0.f);
-				moxie1(args,TUNING);
-				break;
-			
-			case 1:
-				lights[FORM_LIGHT].setBrightness(0.f);
-				lights[FORM_LIGHT+1].setBrightness(0.f);
-				lights[FORM_LIGHT+2].setBrightness(1.f);
-				moxie2(args,1,TUNING);
-				break;
-			case 2:
-				lights[FORM_LIGHT].setBrightness(0.f);
-				lights[FORM_LIGHT+1].setBrightness(1.f);
-				lights[FORM_LIGHT+2].setBrightness(0.f);
-				moxie2(args,0,TUNING);
-				break;
-			case 3:
-				lights[FORM_LIGHT].setBrightness(0.8f);
-				lights[FORM_LIGHT+1].setBrightness(0.8f);
-				lights[FORM_LIGHT+2].setBrightness(0.f);
-				moxiePulsar(args,TUNING);
-				break;
+		case 1:
+			lights[FORM_LIGHT].setBrightness(0.f);
+			lights[FORM_LIGHT+1].setBrightness(0.f);
+			lights[FORM_LIGHT+2].setBrightness(1.f);
+			moxie2(args,form-1,TUNING);
+			break;
+		case 2:
+			lights[FORM_LIGHT].setBrightness(0.f);
+			lights[FORM_LIGHT+1].setBrightness(1.f);
+			lights[FORM_LIGHT+2].setBrightness(0.f);
+			moxie2(args,form-1,TUNING);
+			break;
+		case 3:
+			lights[FORM_LIGHT].setBrightness(0.8f);
+			lights[FORM_LIGHT+1].setBrightness(0.8f);
+			lights[FORM_LIGHT+2].setBrightness(0.f);
+			moxie2(args,form-1,TUNING);
+			break;
 
-			case 4:
-				lights[FORM_LIGHT].setBrightness(1.f);
-				lights[FORM_LIGHT+1].setBrightness(0.f);
-				lights[FORM_LIGHT+2].setBrightness(0.f);
-				moxieTrig(args,TUNING);
-				break;
-			
-			default:
-				moxie1(args,TUNING);
-				break;
-			}
-
+		case 4:
+			lights[FORM_LIGHT].setBrightness(1.f);
+			lights[FORM_LIGHT+1].setBrightness(0.f);
+			lights[FORM_LIGHT+2].setBrightness(0.f);
+			moxieTrig(args,TUNING);
+			break;
+		
+		default:
+			moxie1(args,TUNING);
+			break;
 		}
 	}
 
@@ -332,137 +280,6 @@ struct Moxie : Module {
 			outputs[MAIN_OUTPUT].setVoltage(trig[v].isHigh()*10,v);
 		}
 	}
-
-	void moxiePulsar(const ProcessArgs& args, const float TUNING){
-
-		mode = params[MODE_SWITCH].getValue();
-		flipflopEnabled = params[ALIVE_SWITCH].getValue();
-		float bias = params[BIAS_PARAM].getValue();
-
-		float morphpos = clamp(1.f+params[FADE_PARAM].getValue(),0.f,1.f);
-		float morphneg = clamp(1.f-params[FADE_PARAM].getValue(),0.f,1.f);
-
-		float dec = dsp::exp2_taylor5(-params[BITE_PARAM].getValue());
-
-		int channels = std::max({
-			inputs[MAIN_INPUT].getChannels(),
-			inputs[FM_INPUT].getChannels(),
-			inputs[VOCT_INPUT].getChannels(),
-			inputs[SYNC_INPUT].getChannels(),
-			1
-		});
-
-		for(int i = 0; i<OUTPUTS_LEN; i++){
-			outputs[i].setChannels(channels);
-		}
-
-	//THE LOOP SHOULD START HERE
-		for(int v = 0;v<channels;v++){
-
-			//FREQUENCY/SLOPE MULT
-			float freak = dsp::exp2_taylor5(params[DRIVE_PARAM].getValue()+
-				inputs[FM_INPUT].getVoltage(v)*params[FM_PARAM].getValue()+
-				inputs[VOCT_INPUT].getVoltage(v)
-				)*261.63;
-			freak = clamp(freak,0.f,32000.f);
-			dec /= freak/16;
-			//float dec = 1/freak/8;
-			//FLIP FLOP
-			float posMult = 1.f;
-			float negMult = 1.f;
-			if(flipflopEnabled){
-				posMult=flipflop[v];
-				negMult=1.f-flipflop[v];
-			}
-
-			//SYNC
-			float sync = inputs[SYNC_INPUT].getVoltage(v);
-			if(reset){
-				posSum[v]=0;
-				negSum[v]=0;
-				lastAudio[v]=0;
-			}
-			reset = (sync>0)&&(lastSync[v]<=0);
-			lastSync[v] = sync;
-
-			//MAIN ALGO
-			float audio = softClip(inputs[MAIN_INPUT].getVoltage(v)+bias,10.f,params[LIN_PARAM].getValue());
-			if(mode){//SLOPE MODE
-				getParamQuantity(DRIVE_PARAM)->displayMultiplier = 4.f;//Move this
-				getParamQuantity(DRIVE_PARAM)->unit = "x";//Move this
-				getParamQuantity(DRIVE_PARAM)->name = "Slope Multiplier";//Move this
-
-				float slope = audio - lastAudio[v];
-				lastAudio[v] = audio;
-				for(int i=0;i<oversampling;i++){
-					posEnv[v]=exp2Decay(posEnv[v],dec,args.sampleRate*oversampling);
-					negEnv[v]=exp2Decay(negEnv[v],dec,args.sampleRate*oversampling);
-					if(slope > 0){
-						posSum[v]+=slope*freak/oversampling/65.4075f*posMult;
-					}else{
-						negSum[v]-=slope*freak/oversampling/65.4075f*negMult;
-					}
-					if(posSum[v]>5){
-						flipflop[v]=0;
-						posSum[v]-=5;
-						posEnv[v]=5;
-					}
-					if(negSum[v]>5){
-						flipflop[v]=1;
-						negSum[v]-=5;
-						posEnv[v]=5;
-					}
-				}
-
-			}else{//CONTINUOUS MODE
-				getParamQuantity(DRIVE_PARAM)->displayMultiplier = 261.63f;//Move this
-				getParamQuantity(DRIVE_PARAM)->unit = "hz";//Move this
-				getParamQuantity(DRIVE_PARAM)->name = "Frequency";//Move this
-
-				lastAudio[v] = audio;
-				for(int i=0;i<oversampling;i++){
-					posEnv[v]=exp2Decay(posEnv[v],dec,args.sampleRate*oversampling);
-					negEnv[v]=exp2Decay(negEnv[v],dec,args.sampleRate*oversampling);
-					if(audio>0){
-						posSum[v]+=audio*freak*args.sampleTime/oversampling*posMult*TUNING;
-					}else{
-						negSum[v]-=audio*freak*args.sampleTime/oversampling*negMult*TUNING;
-					}
-					if(posSum[v]>5){
-						flipflop[v]=0;
-						posEnv[v]=5;
-						posSum[v]-=5;
-					}
-					if(negSum[v]>5){
-						flipflop[v]=1;
-						negSum[v]-=5;
-						negEnv[v]=5;
-					}
-				}
-
-			}
-
-			float posOut = sin_2pi_9(5.f-posEnv[v])*posEnv[v]*1.25;
-			float negOut = sin_2pi_9(5.f-negEnv[v])*negEnv[v]*1.25;
-
-			//pulseLP[v].process(posOut);
-			//pulseLP[v+16].process(negOut);
-
-			//posOut = pulseLP[v].lowpass();
-			//negOut = pulseLP[v+16].lowpass();
-
-			float mainOut = posOut*morphpos-negOut*morphneg;
-			dcBlocker[v].process(mainOut);
-			mainOut = dcBlocker[v].highpass()*float(dcRemove)+mainOut*float(!dcRemove);
-			outputs[POSITIVE_OUTPUT].setVoltage(clamp(posOut,-24.f,24.f),v);
-			outputs[NEGATIVE_OUTPUT].setVoltage(clamp(negOut,-24.f,24.f),v);
-			if(clip){
-				outputs[MAIN_OUTPUT].setVoltage(softClip(mainOut,10.f,0.5f),v);
-			}else{
-				outputs[MAIN_OUTPUT].setVoltage(mainOut,v);
-			}
-		}
-	}
 	
 	void moxie2(const ProcessArgs& args, int form, const float TUNING){
 
@@ -556,11 +373,13 @@ struct Moxie : Module {
 					}
 					if(posSum[v]>5){
 						flipflop[v]=0;
+						posEnv[v]=5;
 						posSum[v]-=5;
 					}
 					if(negSum[v]>5){
 						flipflop[v]=1;
 						negSum[v]-=5;
+						negEnv[v]=5;
 					}
 					//posEnv[v]=std::max(posSum[v],exp2Decay(posEnv[v],dec,args.sampleRate*oversampling));
 					//negEnv[v]=std::max(negSum[v],exp2Decay(negEnv[v],dec,args.sampleRate*oversampling));
@@ -575,8 +394,8 @@ struct Moxie : Module {
 					negEnv[v] = mxyRound(negSum[v]/5,shape)*5;
 					break;
 				case 1:
-					posEnv[v] = (mxyRound(posSum[v],shape)>0.5)*5;
-					negEnv[v] = (mxyRound(negSum[v],shape)>0.5)*5;
+					posEnv[v] = mxySpike(posSum[v]/5,shape)*5;
+					negEnv[v] = mxySpike(negSum[v]/5,shape)*5;
 					break;
 				case 2:
 					posEnv[v] = mxyRound(posSum[v]/5,shape)*5;
@@ -718,141 +537,6 @@ struct Moxie : Module {
 			}
 		}
 	}
-
-	void moxieOld(const ProcessArgs& args, int form, const float TUNING){
-
-		mode = params[MODE_SWITCH].getValue();
-		flipflopEnabled = params[ALIVE_SWITCH].getValue();
-		float bias = params[BIAS_PARAM].getValue();
-
-		float morphpos = clamp(1.f+params[FADE_PARAM].getValue(),0.f,1.f);
-		float morphneg = clamp(1.f-params[FADE_PARAM].getValue(),0.f,1.f);
-
-		float shape = -(params[BITE_PARAM].getValue())*0.57142857142;
-
-		int channels = std::max({
-			inputs[MAIN_INPUT].getChannels(),
-			inputs[FM_INPUT].getChannels(),
-			inputs[VOCT_INPUT].getChannels(),
-			inputs[SYNC_INPUT].getChannels(),
-			1
-		});
-
-		for(int i = 0; i<OUTPUTS_LEN; i++){
-			outputs[i].setChannels(channels);
-		}
-
-	//THE LOOP SHOULD START HERE
-		for(int v = 0;v<channels;v++){
-
-			//FREQUENCY/SLOPE MULT
-			float freak = dsp::exp2_taylor5(params[DRIVE_PARAM].getValue()+
-				inputs[FM_INPUT].getVoltage(v)*params[FM_PARAM].getValue()+
-				inputs[VOCT_INPUT].getVoltage(v)
-				)*261.63;
-			freak = clamp(freak,0.f,32000.f);
-			//float dec = 1/freak/8;
-			//FLIP FLOP
-			float posMult = 1.f;
-			float negMult = 1.f;
-			if(flipflopEnabled){
-				posMult=flipflop[v];
-				negMult=1.f-flipflop[v];
-			}
-
-			//SYNC
-			float sync = inputs[SYNC_INPUT].getVoltage(v);
-			if(reset){
-				posSum[v]=0;
-				negSum[v]=0;
-				lastAudio[v]=0;
-			}
-			reset = (sync>0)&&(lastSync[v]<=0);
-			lastSync[v] = sync;
-
-			//MAIN ALGO
-			float audio = softClip(inputs[MAIN_INPUT].getVoltage(v)+bias,10.f,params[LIN_PARAM].getValue());
-			if(mode){//SLOPE MODE
-				getParamQuantity(DRIVE_PARAM)->displayMultiplier = 4.f;//Move this
-				getParamQuantity(DRIVE_PARAM)->unit = "x";//Move this
-				getParamQuantity(DRIVE_PARAM)->name = "Slope Multiplier";//Move this
-
-				float slope = audio - lastAudio[v];
-				lastAudio[v] = audio;
-				for(int i=0;i<oversampling;i++){
-					if(slope > 0){
-						posSum[v]+=slope*freak/oversampling/65.4075f*posMult;
-					}else{
-						negSum[v]-=slope*freak/oversampling/65.4075f*negMult;
-					}
-					if(posSum[v]>5){
-						flipflop[v]=0;
-						posSum[v]-=5;
-					}
-					if(negSum[v]>5){
-						flipflop[v]=1;
-						negSum[v]-=5;
-					}
-					//posEnv[v]=std::max(posSum[v],exp2Decay(posEnv[v],dec,args.sampleRate*oversampling));
-					//negEnv[v]=std::max(negSum[v],exp2Decay(negEnv[v],dec,args.sampleRate*oversampling));
-				}
-
-			}else{//CONTINUOUS MODE
-				getParamQuantity(DRIVE_PARAM)->displayMultiplier = 261.63f;//Move this
-				getParamQuantity(DRIVE_PARAM)->unit = "hz";//Move this
-				getParamQuantity(DRIVE_PARAM)->name = "Frequency";//Move this
-
-				lastAudio[v] = audio;
-				for(int i=0;i<oversampling;i++){
-					if(audio>0){
-						posSum[v]+=audio*freak*args.sampleTime/oversampling*posMult*TUNING;
-					}else{
-						negSum[v]-=audio*freak*args.sampleTime/oversampling*negMult*TUNING;
-					}
-					if(posSum[v]>5){
-						flipflop[v]=0;
-						posSum[v]-=5;
-					}
-					if(negSum[v]>5){
-						flipflop[v]=1;
-						negSum[v]-=5;
-					}
-					//posEnv[v]=std::max(posSum[v],exp2Decay(posEnv[v],dec,args.sampleRate*oversampling));
-					//negEnv[v]=std::max(negSum[v],exp2Decay(negEnv[v],dec,args.sampleRate*oversampling));
-				}
-
-			}
-
-			switch (form)
-				{
-				case 0:
-					posEnv[v] = mxyRound(posSum[v]/5,shape)*5;
-					negEnv[v] = mxyRound(negSum[v]/5,shape)*5;
-					break;
-				case 1:
-					posEnv[v] = mxySpike(posSum[v]/5,shape)*5;
-					negEnv[v] = mxySpike(negSum[v]/5,shape)*5;
-					break;
-				case 2:
-					posEnv[v] = mxyRound(posSum[v]/5,shape)*5;
-					negEnv[v] = mxySpike(negSum[v]/5,shape)*5;
-					break;
-				default:
-					break;
-			}
-
-			float mainOut = posEnv[v]*morphpos-negEnv[v]*morphneg;
-			dcBlocker[v].process(mainOut);
-			mainOut = dcBlocker[v].highpass()*float(dcRemove)+mainOut*float(!dcRemove);
-			outputs[POSITIVE_OUTPUT].setVoltage(clamp(posEnv[v],-24.f,24.f),v);
-			outputs[NEGATIVE_OUTPUT].setVoltage(clamp(negEnv[v],-24.f,24.f),v);
-			if(clip){
-				outputs[MAIN_OUTPUT].setVoltage(softClip(mainOut,10.f,0.5f),v);
-			}else{
-				outputs[MAIN_OUTPUT].setVoltage(mainOut,v);
-			}
-		}
-	}
 };
 
 
@@ -895,8 +579,6 @@ struct MoxieWidget : ModuleWidget {
 		menu->addChild(createMenuLabel("Main output options"));
 		menu->addChild(createBoolPtrMenuItem("Soft clip to ±10v","",&module->clip));
 		menu->addChild(createBoolPtrMenuItem("Remove DC offset","",&module->dcRemove));
-		menu->addChild(createBoolPtrMenuItem("Old Oscillator Models","",&module->oldMode));
-		menu->addChild(createIndexPtrSubmenuItem("Model", {"Base","Square","Sine Warp","Sine Pulse","Clock"}, &module->form));
 		menu->addChild(new MenuSeparator);
 		menu->addChild(createIndexSubmenuItem(
 			"Panel Theme", 
