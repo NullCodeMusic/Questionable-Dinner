@@ -1,7 +1,7 @@
 {
   "slug": "QuestionableDinner",
   "name": "Questionable Dinner",
-  "version": "2.0.7",
+  "version": "2.1.7",
   "license": "Apache-2.0",
   "brand": "Questionable Dinner",
   "author": "Rox Wilson",
@@ -11,7 +11,7 @@
   "manualUrl": "https://github.com/NullCodeMusic/Questionable-Dinner/blob/master/manual.md",
   "sourceUrl": "https://github.com/NullCodeMusic/Questionable-Dinner/",
   "donateUrl": "https://ko-fi.com/rox1000000",
-  "changelogUrl": "",
+  "changelogUrl": "https://github.com/NullCodeMusic/Questionable-Dinner/blob/master/readme.md",
   "modules": [
     {
       "slug": "ASawB",
