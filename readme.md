@@ -1,6 +1,6 @@
 # Questionable Dinner
 A free plugin for VCV Rack focusing on playful design.
-### Changelog, v2.0.7:
+### Changelog, v2.1.7:
 - **General**: Some efficiency tweaks and code refactoring.
 
 - **General**: Fixed a rendering crash with module themes.
