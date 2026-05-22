@@ -1,6 +1,6 @@
 # Questionable Dinner
 A free plugin for VCV Rack focusing on playful design.
-### Changelog, v2.0.7:
+### Changelog, v2.1.7:
 - **General**: Some efficiency tweaks and code refactoring.
 
 - **General**: Fixed a rendering crash with module themes.
@@ -11,10 +11,11 @@ A free plugin for VCV Rack focusing on playful design.
 - **Moxie**: Added model selection to right click context menu.
 - **The Funnel**: Fixed a crash.
 - Added **Organism**, an additive oscillator.
-- Added **Domesticate**, a modifier for organism to tame its inharmonic elements.
+- Added **O-Tamer**, a modifier for organism to tame its inharmonic elements.
 - Added **Simmer**, which turns trigs into pitch steps.
 - Added **Dead Meat**, another distortion module.
-- Added **WTHR**, a noise/texture oscillator
+- Added **WTHR**, a noise/texture oscillator.
+- Added **Boxes**, a delay/reverb.
 - Updated the user manual (finally).
 
 ### Fonts Used:
