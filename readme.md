@@ -14,7 +14,8 @@ A free plugin for VCV Rack focusing on playful design.
 - Added **O-Tamer**, a modifier for organism to tame its inharmonic elements.
 - Added **Simmer**, which turns trigs into pitch steps.
 - Added **Dead Meat**, another distortion module.
-- Added **WTHR**, a noise/texture oscillator
+- Added **WTHR**, a noise/texture oscillator.
+- Added **Boxes**, a delay/reverb.
 - Updated the user manual (finally).
 
 ### Fonts Used:
