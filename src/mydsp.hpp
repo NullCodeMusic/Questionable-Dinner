@@ -210,3 +210,18 @@ struct Differentiator{
 	}
 };
 
+template <typename T>
+struct resonator{
+
+	void process(float sampleTime){
+
+	}
+
+	void setParams(T friction, T tension, T pitch){
+
+	}
+
+	void impulse(T val){
+
+	}
+};

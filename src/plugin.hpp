@@ -30,6 +30,10 @@ extern Model* modelDialecticFilter;
 extern Model* modelWeather;
 extern Model* modelBoxes;
 extern Model* modelOTamer;
+extern Model* modelCLatch;
+extern Model* modelConvection;
+extern Model* modelPlasticWrap;
+extern Model* modelSpoon;
 
 //Custom Panels
 struct QTintPanel : SvgPanel {

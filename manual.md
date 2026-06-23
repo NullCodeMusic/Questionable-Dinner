@@ -1,5 +1,5 @@
 # QUESTIONABLE DINNER USER MANUAL
-This manual is a quick reference/summary of each of my modules. I prioritized brevity when writing it, so parameters, inputs, and outputs that I think are explained by their names are omitted.
+This manual is a quick reference/summary of each of my modules. I prioritized brevity when writing it, so parameters, inputs, and outputs that I think are explained by their names or more easily understood by playing around are omitted.
 ## QD001 A Saw B
 A Saw B Is a multi module with a window comparator, difference rectifier, and simple subtraction. A and B ports are normalled to A and B inputs from above.
 > **Comparator** ( **A>B**, **A<B**, **A=B**, **A!=B** )
@@ -383,3 +383,57 @@ You can **Send** and **Recieve** to add effects to its feedback chain.
 > **Feedback** takes a second reflection off of the walls, and feeds it back into the input. **Highpass**, **Lowpass** and **Diffuse** are all applied to the feedback chain.
 >
 > **Pull** makes it so that direct audio to A and B outs happens immediately at the closest output, and scales down the delay at the other by that same amount, separating them from the rest of the delay signal.
+
+## QD015 Boxes
+Boxes is a delay/reverb based on distances between points and the walls of a box. This is mainly a method of dispersing delay times and not meant for realism. 
+
+You can **Send** and **Recieve** to add effects to its feedback chain. 
+
+> **The Screen** lets you drag around points for the input and two outputs.
+>
+> **Delay** is a multiplier for the calculated delay times, and is not directly implemented as a delay time.
+> 
+> **Width** and **Height** determine the size of the box.
+>
+> **Feedback** takes a second reflection off of the walls, and feeds it back into the input. **Highpass**, **Lowpass** and **Diffuse** are all applied to the feedback chain.
+>
+> **Pull** makes it so that direct audio to A and B outs happens immediately at the closest output, and scales down the delay at the other by that same amount, separating them from the rest of the delay signal.
+
+## QD016 C-Latch
+C-Latch is a utility for synchronizing gates and trigs to other gates. On the top of the module there's an input for a master gate/clock. The signals at the bottom are re-timed so that their rise and fall timings match the nearest rise and fall from the master clock. There's a button to configure leniency. 
+
+Technically, any signal can be sent through and converted into a timing-compliant gate signal.
+
+## QD017 Convection
+Convection is a quad envelope/curve generator. Each segment has an End-of-Cycle trigger that can be linked to another segment or routed to other modules. 
+
+The module as a whole has:
+> **Time Scale**, a multiplier used by all segments on the module.
+>
+> **Reset**, a trig input to reset the whole module.
+>
+> **Running CV** and **Trig** outputs to turn segments into one single sequence and produce trigs based on the sequence. This can be fed into a sample & hold then quantizer to make melodies. 
+
+Each segment has:
+> A **Type** that can be switched with an LED button:
+> * Up and Down for single slopes
+> * Up-Down and Down-Up for segments that do both
+> * Constant to momentarily hold a value then go back to 0.
+>
+> **Length** determines how much time the segment takes to complete. It's set as a multiplier on Time Scale. 
+>
+> **Completion (%)** determines how much of the segment is played. If it's at 75% it'll play the first 75% of the segment in the set time and stop. 
+> 
+> **Trig Density** determines how many trigs are placed in the sequence, and thus sent to the module's trig output.
+>
+> **Skew** reshapes the segment. For the Up, Down, Up-Down, and Down-Up segment modes, it changes them from straight lines at the center to lines that curve. For the Constant segment mode, it determines the value that's held before returning to 0.
+>
+> **Amp** scales the segment.
+>
+> **Exclusive CV Output** will output the segment, scaled up. If a segment's exclusive CV output is connected, it is *not* added to the module's Running CV and Trig outputs.
+
+
+*I have a lot of fun patching this with Befacto's Burst, Bernolli Gates, Clock Dividers, and other gate based tools.*
+
+## QD018 Plastic Wrap
+Plastic wrap is a simple variable-hardness clipper. It clips at either +-5v or +-10v, and has an LED display to show clipping behavior. The **Plastic Wrap** parameter adds amplitude tracking to the clipper, which gives it a smoother character.

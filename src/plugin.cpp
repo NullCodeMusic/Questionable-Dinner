@@ -25,6 +25,10 @@ void init(Plugin* p) {
 	p->addModel(modelWeather);
 	p->addModel(modelBoxes);
 	p->addModel(modelOTamer);
+	p->addModel(modelCLatch);
+	p->addModel(modelConvection);
+	p->addModel(modelPlasticWrap);
+	p->addModel(modelSpoon);
 	// Any other plugin initialization may go here.
 	// As an alternative, consider lazy-loading assets and lookup tables when your module is created to reduce startup times of Rack.
 }

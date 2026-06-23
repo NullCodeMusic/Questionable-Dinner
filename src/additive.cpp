@@ -372,7 +372,7 @@ void BlendFilter::process(){
         return;
     }
     float n = MAX_PARTIALS;
-    float_4 i = {1,2,3,4};
+    float_4 i;
     float k; 
     switch (type) {
         case FTYPE_HIGHPASS:

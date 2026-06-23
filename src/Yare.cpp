@@ -95,7 +95,7 @@ struct Yare : Module {
 
 		lights[LIGHT_LIGHT].setBrightness((5.f-env)/5.f*amount*float(env>threshold));
 		lights[LIGHT_LIGHT+1].setBrightness((env-5.f)/5.f*amount*float(env>5.f));
-		outputs[AUDIO_OUTPUT].setVoltage(softClip(scaledAudio*amount*5,10.f,0.75f)*vca+audio*(1-amount)*vca);
+		outputs[AUDIO_OUTPUT].setVoltage(softClip(scaledAudio*amount*5,6.f,5.f/6.f)*vca+audio*(1-amount)*vca);
 	}
 };
 

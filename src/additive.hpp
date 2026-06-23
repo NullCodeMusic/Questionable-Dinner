@@ -183,4 +183,31 @@ struct BlendFilter {
     void process();
 };
 
+namespace biohack{
+///////////////////////////
+//                       //
+//  BIOHACK SYNTH CODE   //
+//                       //
+///////////////////////////
+struct BaseSynth{
+    virtual ~BaseSynth();
+    simd::float_4 partials[3][MAX_PARTIALS] = {};
+    simd::float_4 phasors[MAX_PARTIALS] = {};
+    bool queuedReset;
+    float sampleTime;
+    simd::float_4 mask = {1,0,0,0};
+    void setParams(float sampleRate, float numPartials){
+
+    }
+    void process(){
+
+    }
+};
+///////////////////////////
+//                       //
+//  BIOHACK MORPHS CODE  //
+//                       //
+///////////////////////////
+}
+
 }
