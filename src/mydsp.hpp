@@ -211,17 +211,43 @@ struct Differentiator{
 };
 
 template <typename T>
-struct resonator{
+struct Resonator{
+
+	T state = 0;
+	T momentum = 0;
+	T impLast = 0;
+	T impSlope = 0;
+
+	T decayTime = 0.001;
+	T tension =  675588.050316;
+	T pitchMult = 1;
 
 	void process(float sampleTime){
-
+		momentum += state * -tension * T(sampleTime) * pitchMult;
+		state += momentum * T(sampleTime) * pitchMult + impSlope;
+		momentum = exp2DecayST(momentum,decayTime,sampleTime);
+		impSlope = 0;
 	}
 
-	void setParams(T friction, T tension, T pitch){
-
+	void nanCheck(){
+		if(std::isnan(state)){
+			state = T(0);
+		}
 	}
 
-	void impulse(T val){
+	void reset(){
+		state = 0;
+		momentum = 0;
+	}
 
+	void setParams(T decayTime, T tension, T pitch){
+		this->tension = tension*T(675588.050316);
+		this->pitchMult = pitch;
+		this->decayTime = decayTime/T(10);
+	}
+
+	void excite(T val){
+		impSlope = val-impLast;
+		impLast = val;
 	}
 };

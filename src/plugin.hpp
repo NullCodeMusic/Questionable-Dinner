@@ -33,7 +33,8 @@ extern Model* modelOTamer;
 extern Model* modelCLatch;
 extern Model* modelConvection;
 extern Model* modelPlasticWrap;
-extern Model* modelSpoon;
+extern Model* modelFourSpoons;
+extern Model* modelTest;
 
 //Custom Panels
 struct QTintPanel : SvgPanel {

@@ -204,13 +204,20 @@
       ]
     },
     {
-      "slug": "Spoon",
-      "name": "Spoon",
-      "description": "Variable hardness clipper",
+      "slug": "FourSpoons",
+      "name": "Four Spoons",
+      "description": "Four Resonators",
       "tags": [
-        "distortion"
-      ],
-      "hidden":true
+        "oscillator","physical modeling"
+      ]
+    },
+    {
+      "slug": "Test",
+      "name": "Test Module",
+      "description": "Four Resonators",
+      "tags": [
+        "oscillator","physical modeling"
+      ]
     }
   ]
 }

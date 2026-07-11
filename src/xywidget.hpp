@@ -2,6 +2,7 @@
 
 #include <rack.hpp>
 #include <vector>
+#include "mymath.hpp"
 
 using namespace rack;
 
@@ -68,13 +69,108 @@ struct XYPoint {
     }
 };
 
+struct FunctionProvider {
+    NVGcolor color = nvgRGBf(242.f/255.f, 223.f/255.f, 0.f/255.f);
+    float scan = 0;
+    virtual float calculate(float x){
+        return x;
+    }
+};
+
+struct FunctionRenderer : OpaqueWidget{
+    float bounds[4] = {-0.9f,0.9f,-0.9f,0.9f};
+    int gridSize = 10;
+    bool gridsnap = false;
+    bool drawBounds = true;
+    bool drawGrid = true;
+    NVGcolor bgCol = nvgRGBf(0.09803921568f,0.07843137254f,0.07450980392f);
+    NVGcolor gCol = nvgRGBAf(1,1,1,0.4);
+
+    std::vector<FunctionProvider*> funct;
+    int functRes = 50;
+    float functScan = 0;
+
+    void draw(const DrawArgs& args) override{
+
+    }
+
+    void drawLayer(const DrawArgs& args, int layer) override {
+        if (layer==1)
+        {
+            float boxX = box.size.x;
+            float boxY = box.size.y;
+            float boxX2 = box.size.x/2;
+            float boxY2 = box.size.y/2;
+            const float left = bounds[B_LEFT]*boxX2+boxX2;
+            const float bottom = bounds[B_BOTTOM]*boxY2+boxY2;
+            const float right = bounds[B_RIGHT]*boxX2+boxX2;
+            const float top = bounds[B_TOP]*boxY2+boxY2;
+
+            nvgShapeAntiAlias(args.vg,1);
+            nvgSave(args.vg);
+
+            if(drawBounds){
+                nvgStrokeColor(args.vg, gCol);
+                nvgBeginPath(args.vg);
+                nvgRect(args.vg, left, top, right-left, bottom-right);
+                nvgStroke(args.vg);
+            }
+
+            if(drawGrid){
+                float gridStep = 1.f/gridSize;
+                nvgAlpha(args.vg,0.2);
+                for(int i = 1;i < gridSize;i++){
+                    lineSegment(args.vg,i*gridStep*boxX,0,i*gridStep*boxX,boxY);
+                    lineSegment(args.vg,0,i*gridStep*boxY,boxX,i*gridStep*boxY);
+                    lineSegment(args.vg,i*gridStep*boxX,bottom,i*gridStep*boxX,top);
+                    lineSegment(args.vg,left,i*gridStep*boxY,right,i*gridStep*boxY);
+                }
+            }
+
+            nvgRestore(args.vg);
+
+            for(FunctionProvider* f : funct){
+                nvgStrokeColor(args.vg, f->color);
+                nvgBeginPath(args.vg);
+
+                //DRAW FUNCTION CURVE
+                float fVal = f->calculate(0);
+                float fRes = functRes;
+                float xPos = bottom;
+
+                nvgMoveTo(args.vg, left, lerp(bottom,top,fVal));
+
+                for(int i=1;i<=functRes;i++){
+                    fVal = f->calculate(float(i)/fRes);
+                    xPos += float(i)/fRes;
+                    nvgLineTo(args.vg, lerp(left,right,xPos), lerp(bottom,top,fVal));
+                }
+
+                nvgStroke(args.vg);
+
+                //DRAW POINT ON CURVE
+                if(functScan>0){
+                    
+                }
+            }
+        }
+	}
+};
+
 struct XYScreen : OpaqueWidget{
     float bounds[4] = {-0.9f,0.9f,-0.9f,0.9f};
     int gridSize = 10;
     float pointSizeRaw = 10;  
     bool gridsnap = false;
+    bool drawBounds = true;
+    bool drawGrid = true;
     NVGcolor bgCol = nvgRGBf(0.09803921568f,0.07843137254f,0.07450980392f);
     NVGcolor gCol = nvgRGBAf(1,1,1,0.4);
+
+    std::vector<FunctionProvider*> funct;
+    int functRes = 50;
+    float functScan = 0;
+
     private: 
     std::vector<XYPoint*> points;
     bool active = false;
@@ -160,22 +256,26 @@ struct XYScreen : OpaqueWidget{
             Vec tl = raw(Vec(bounds[B_LEFT],bounds[B_TOP]));
             Vec br = raw(Vec(bounds[B_RIGHT],bounds[B_BOTTOM]));
 
-            nvgStrokeColor(args.vg, gCol);
-            nvgBeginPath(args.vg);
-            nvgRect(args.vg, tl.x, tl.y, br.x-tl.x, br.y-tl.y);
-            nvgStroke(args.vg);
+            if(drawBounds){
+                nvgStrokeColor(args.vg, gCol);
+                nvgBeginPath(args.vg);
+                nvgRect(args.vg, tl.x, tl.y, br.x-tl.x, br.y-tl.y);
+                nvgStroke(args.vg);
+            }
 
-            float gridStep = 1.f/gridSize;
-            nvgAlpha(args.vg,0.2);
-            float boxX = box.size.x;
-            float boxY = box.size.y;
-            float boxX2 = boxX/2;
-            float boxY2 = boxY/2;
-            for(int i = 1;i < gridSize;i++){
-                lineSegment(args.vg,i*gridStep*boxX,0,i*gridStep*boxX,boxY);
-                lineSegment(args.vg,0,i*gridStep*boxY,boxX,i*gridStep*boxY);
-                lineSegment(args.vg,i*gridStep*boxX,bounds[B_BOTTOM]*boxY2+boxY2,i*gridStep*boxX,bounds[B_TOP]*boxY2+boxY2);
-                lineSegment(args.vg,bounds[B_LEFT]*boxX2+boxX2,i*gridStep*boxY,bounds[B_RIGHT]*boxX2+boxX2,i*gridStep*boxY);
+            if(drawGrid){
+                float gridStep = 1.f/gridSize;
+                nvgAlpha(args.vg,0.2);
+                float boxX = box.size.x;
+                float boxY = box.size.y;
+                float boxX2 = boxX/2;
+                float boxY2 = boxY/2;
+                for(int i = 1;i < gridSize;i++){
+                    lineSegment(args.vg,i*gridStep*boxX,0,i*gridStep*boxX,boxY);
+                    lineSegment(args.vg,0,i*gridStep*boxY,boxX,i*gridStep*boxY);
+                    lineSegment(args.vg,i*gridStep*boxX,bounds[B_BOTTOM]*boxY2+boxY2,i*gridStep*boxX,bounds[B_TOP]*boxY2+boxY2);
+                    lineSegment(args.vg,bounds[B_LEFT]*boxX2+boxX2,i*gridStep*boxY,bounds[B_RIGHT]*boxX2+boxX2,i*gridStep*boxY);
+                }
             }
 
             nvgRestore(args.vg);

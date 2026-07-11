@@ -46,6 +46,17 @@ inline float softClip(float val, float thresh, float hardness ){ //Hardness must
 	return out;
 }
 
+inline simd::float_4 softClip(simd::float_4 val, simd::float_4 thresh, simd::float_4 hardness ){ //Hardness must be < 1.f
+	const simd::float_4 valSgn = sgn(val);
+	const simd::float_4 a = thresh/(1.f+hardness);
+	const simd::float_4 b = abs(val)*0.5f/a;
+	const simd::float_4 c = fmin(b,1.0f);
+	const simd::float_4 d = fmax(b-hardness,0.0f)*valSgn/(1.0f-hardness);
+
+	const simd::float_4 out = (d*(1.f-c)+c*valSgn)*a+clamp(0.5f*val,-hardness*a,hardness*a);
+	return out;
+}
+
 inline float softClip(float val, float thresh){
 	const float c = std::min(abs(val)/thresh/2,1.0f);
 	const float out = ((val/thresh/2)*(1.f-c)+c*sign(val))*thresh;
@@ -68,6 +79,12 @@ inline float softFold05(float val){
 
 inline float exp2Decay(float val, float time, float sr){
 	const float factor = dsp::exp2_taylor5(-(1.f/time)/sr);
+	return val*factor;
+}
+
+template <typename T>
+inline T exp2DecayST(T val, T time, float st){
+	const T factor = dsp::exp2_taylor5(-(1.f/time)*st);
 	return val*factor;
 }
 
@@ -153,12 +170,16 @@ inline T cubic(T a,T b,T c,T d,float x){//INTERPOLATES B TO C
 	a2 = c - a;
 	a3 = b;
 
-	return a0*x*x2+a1*x2+a2*x+a3;
-}
+	/*
+	//Catmull-Rom
 
-template <typename T>
-inline T lerp(T a, T b, float x){
-	return(a*(1-x)+b*x);
+	a0 = -0.5*y0 + 1.5*y1 - 1.5*y2 + 0.5*y3;
+	a1 = y0 - 2.5*y1 + 2*y2 - 0.5*y3;
+	a2 = -0.5*y0 + 0.5*y2;
+	a3 = y1;
+	*/
+
+	return a0*x*x2+a1*x2+a2*x+a3;
 }
 
 template <typename T>
